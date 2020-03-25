@@ -46,22 +46,27 @@ const routes = [
     {
         path: '/login',
         name: 'login',
-        component: () => import('../loginuser.vue'),
+        component: () => import('../views/Landing/loginuser.vue'),
     },
     {
         path: '/register',
         name: 'register',
-        component: () => import('../Register.vue'),
+        component: () => import('../views/Landing/Register.vue'),
     },
     {
         path: '/',
         name: 'landing',
-        component: () => import('../Landing.vue'),
+        component: () => import('../views/Landing/Landing.vue'),
     },
     {
         path: '/search',
         name: 'search',
         component: () => import('../views/Search.vue')
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: () => import('../views/Profile/Profile.vue')
     }
 ]
 

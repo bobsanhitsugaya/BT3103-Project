@@ -52,7 +52,7 @@
                 <v-subheader>ANALYTICS</v-subheader>
                 <template v-for="item in analyticsItems">
                     <v-tooltip right :disabled="!miniVariant">
-                        <v-list-tile
+                        <v-list-tile @submit.prevent="enter"
                                 :key="item.icon"
                                 :to="item.link"
                                 exact
@@ -167,12 +167,12 @@
                     </v-list-tile>
                     <v-divider></v-divider>
 
-                    <v-list-tile key="profile" @click="">
+                    <v-list-tile key="profile" to="/profile">
                         <v-list-tile-action>
                             <v-icon>person</v-icon>
                         </v-list-tile-action>
                         <v-list-tile-content>
-                            <v-list-tile-title>My Profile</v-list-tile-title>
+                            <v-list-tile-title to='/profile'>My Profile</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                     <v-divider></v-divider>
@@ -356,7 +356,11 @@ import firebase from "firebase";
                         name: "login"
                     });
                     });
-                }
+            },
+            enter(){
+                this.$router.push({name: 'Chat', params: {name: user.data.displayName}});
+            }
+
         }
     }
 </script>
