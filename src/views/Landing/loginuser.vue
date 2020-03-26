@@ -70,9 +70,16 @@ export default {
       firebase
         .auth()
         .signInWithEmailAndPassword(this.form.email, this.form.password)
-        .then(data => {
-          this.$router.push({name: 'Chat', params: {name: this.form.email}});
+        .then(user => {
+          const newUser = {
+            id: user.uid
+          }
+         // this.$root.uid = user.user.uid;
+          this.$router.push({name: 'home'})
+          alert(`you are logged in as ${user.user.email}`)
           // this.$router.replace({ name: "home" });
+          store.dispatch('fetchuser',user)
+          console.log(user.user.displayName)
         })
         .catch(err => {
           this.error = err.message;

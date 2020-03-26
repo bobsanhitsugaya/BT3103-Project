@@ -32,16 +32,11 @@ export default {
     methods:{
         login(){
             if(this.name){
-                this.$router.push({name: 'Chat', params: {name: this.name}});
+                this.$router.push({name: 'Home'});
+                
             } else {
                 this.errorText = 'Please enter a name first'
             }
-        },
-        addName:  function () {
-          //Save item to database
-          database.collection('messages').doc().set(this.messages);
-          console.log('Hi')
-          alert("I am in the DB .... :-) Item saved successfully")
         }
     }
 }
