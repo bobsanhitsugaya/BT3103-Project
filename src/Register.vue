@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div id= 'modal-signup' class="container">
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card">
@@ -72,6 +72,7 @@
 
 <script>
 import firebase from "firebase";
+import fb from '@/firebase/init.js';
 export default {
   data() {
     return {
@@ -88,12 +89,10 @@ export default {
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
-        .then(data => {
-          data.user
-            .updateProfile({
-              displayName: this.form.name
-            })
-            .then(() => {});
+        .then(cred => {
+          return fb.collection('users').doc(cred.user.uid).set({
+            username: this.form.name
+          });
         })
         .catch(err => {
           this.error = err.message;

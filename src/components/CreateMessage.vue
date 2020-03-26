@@ -26,7 +26,7 @@ export default {
             if(this.newMessage){
                 fb.collection('messages').add({
                     message:this.newMessage,
-                    name: this.name,
+                    name: user.email,
                     timestamp: Date.now()
                 }).catch(err => {
                     console.log(err);
