@@ -39,10 +39,11 @@
         <div class="mesgs">
           <div class="msg_history">
             <div v-for="message in messages" v-bind:key="message" class="incoming_msg">
-
                 <div :class="[message.author===authUser.email?'sent_msg':'received_msg']">
+
                     <div class="received_withd_msg">
-                        <p>{{message.message}}</p>
+                        <p>               
+                          {{message.message}}</p>
                         
                         <span class="time_date">{{message.createdAt.toDate().getMonth()+ "/" + message.createdAt.toDate().getDate()+ " " + message.createdAt.toDate().getHours()+ ":"+ message.createdAt.toDate().getMinutes()}}||{{message.author}}</span></div>
               </div>
@@ -206,17 +207,18 @@ img{ max-width:100%;}
 .received_msg {
   display: inline-block;
   padding: 0 0 0 10px;
-  vertical-align: top;
   width: 92%;
+  margin-left:auto;
+  position:relative;
  }
  .received_withd_msg p {
-  background: #ebebeb none repeat scroll 0 0;
-  border-radius: 3px;
-  color: #646464;
-  font-size: 14px;
-  margin: 0;
-  padding: 5px 10px 5px 12px;
-  width: 100%;
+ 		margin-top: auto;
+		margin-bottom: auto;
+		margin-left: 10px;
+		border-radius: 25px;
+		background-color: #82ccdd;
+		padding: 10px;
+		position: relative;
 }
 .time_date {
   color: #747474;
@@ -226,25 +228,26 @@ img{ max-width:100%;}
 }
 .received_withd_msg { width: 57%;}
 .mesgs {
-  float: left;
   padding: 30px 15px 0 25px;
   width: 60%;
+  display: flex;
+  flex-direction: column;
 }
 
  .sent_msg p {
-  background: #05728f none repeat scroll 0 0;
-  border-radius: 3px;
-  font-size: 14px;
-  margin: 0; color:#fff;
-  padding: 5px 10px 5px 12px;
-  width:100%;
+		border-radius: 25px;
+		background-color: #ffa41b;
+		padding: 10px;
+		position: relative;
+
 }
 .outgoing_msg{ overflow:hidden; margin:26px 0 26px;}
 .sent_msg {
   display: inline-block;
   padding: 0 0 0 10px;
-  vertical-align: top;
   width: 92%;
+  position:relative;
+  margin-left:250px;
 }
 .input_msg_write input {
   background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
@@ -274,4 +277,5 @@ img{ max-width:100%;}
   height: 516px;
   overflow-y: auto;
 }
+
 </style>
