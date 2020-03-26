@@ -20,15 +20,15 @@
     <div :class="[$style['alternate-bg'], $style['header-bg']]" class="py-5 text-center">
       <div class="container">
         <!-- <logo /> -->
-        <h1>
+        <h1 :class="$style.orange"><strong>
           NUS FORUM
-        </h1>
-        <h4 class="text-secondary">
+        </strong></h1>
+        <h4 :class="$style.orange" >
           Simple and easy way to connect NUS students
         </h4>
 
         <div class="mt-5">
-          <div class="my-2 text-secondary">Join our early access program.</div>
+          <div>Join our early access program.</div>
           <form>
             <div class="form-row justify-content-md-center">
               <div class="col-md-auto mb-3">
@@ -82,52 +82,66 @@
         </div>
       </div>
     </div>
-    <div class="py-3">
-      <div class="container">
-        <div class="text-center">© MADE WITH LOVE BY 3G3B</div>
-      </div>
-    </div>
+
+   
+    <v-footer padless>
+      <v-col :class="$style.blue"
+        class="text-center"
+        cols="12"
+      >
+        <strong>Made With Love By 3G3B</strong>
+      </v-col>
+    </v-footer>
+
   </div>
 </template>
 
 <script>
-export default {
-  head: {
-    title: 'Journey - create a photo blog'
+ export default {
+    data: () => ({
+      icons: [
+        'fab fa-facebook',
+        'fab fa-twitter',
+        'fab fa-google-plus',
+        'fab fa-linkedin',
+        'fab fa-instagram',
+      ],
+    }),
   }
-}
 </script>
 
 <style module>
 .alternate-bg {
-  background-color: #FBFBFB;
-  border-bottom: solid 1px #DEDEDE;
-  border-top: solid 1px #DEDEDE;
+  background-color: #003D7C;
+  border-bottom: solid 1px #003D7C;
+  border-top: solid 1px #003D7C;
 }
 
 .navbar-bg {
   border-top: 0;
   border-bottom: 0;
+  background-color: white;
 }
 
 .header-bg {
   border-top: 0;
-}
-
-.social-icon {
   color: white;
-  font-size: 25px;
-  margin: 5px 5px;
-  text-align: center;
-  text-decoration: none;
 }
 
-.circle {
-  background-color: grey;
-  border-radius: 50%;
-  display: inline-block;
-  margin-left: 5px;
-  margin-right: 5px;
-  padding: 15px;
+.txt {
+  color: white;
 }
+
+.blue {
+  color: white;
+  background-color: #003D7C;
+  width:100%;
+  height: 100%;
+  padding: 0.5%
+}
+
+.orange{
+  color:#EF7C00
+}
+
 </style>

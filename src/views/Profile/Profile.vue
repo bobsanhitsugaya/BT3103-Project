@@ -65,7 +65,7 @@
             <v-container fluid grid-list-lg>
               <v-layout row wrap>
                 <v-flex md>
-                  <h2>Your Profile</h2>
+                  <h2>Message</h2>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -77,27 +77,24 @@
             <v-container fluid grid-list-lg>
               <v-layout row wrap>
                 <v-flex md8>
-                  <h2>Experience</h2>
+                  <h2>Experiences</h2>
                 </v-flex>
               </v-layout>
             </v-container>
           </v-card>
 
             <v-card md6 >
-                <v-card-text>
-                <div>Word of the Day</div>
-                <p class="display-1 text--primary">
-                    be•nev•o•lent
-                </p>
-                <p>adjective</p>
-                <div class="text--primary">
-                    well meaning and kindly.<br>
-                    "a benevolent smile"
-                </div>
+                <v-card-text v-if="!editing">
+                  <span class='text'>{{value}}</span>
+                </v-card-text>
+                <v-card-text v-if="editing">
+                  <textarea v-model="tempValue" class="input"/>
                 </v-card-text>
                 <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn>Explore</v-btn>
+                <v-btn v-if="!editing" @click="enableEditing">Edit</v-btn>
+                <v-btn v-if="editing" @click="disableEditing">Cancel</v-btn>
+                <v-btn v-if="editing" @click="saveEdit">Save</v-btn>
                 </v-card-actions>
             </v-card>
 
@@ -138,6 +135,7 @@
 <script>
 export default {
   data() {
+    
     return {
       name: 'Jon Tan',
       course: 'Year 4 Computer Science',
@@ -174,8 +172,27 @@ export default {
             'Authenticate and manage users from a variety of providers without server-side-code',
           color: 'purple'
         }
-      ]
+      ],
+      value: 'Click Me!',
+      tempValue: null,
+      editing: false
+      
     };
+  },
+  methods: {
+    enableEditing: function(){
+      this.tempValue = this.value;
+      this.editing = true;
+    },
+    disableEditing: function(){
+      this.tempValue = null;
+      this.editing = false;
+    },
+    saveEdit: function(){
+      // However we want to save it to the database
+      this.value = this.tempValue;
+      this.disableEditing();
+    }
   }
 };
 </script>
@@ -212,4 +229,16 @@ h3 {
   color: gray;
   white-space: normal;
 }
+
+textarea
+{
+  width:100%;
+}
+.textwrapper
+{
+  border:1px solid #999999;
+  margin:5px 0;
+  padding:3px;
+}
+
 </style>
