@@ -1,33 +1,37 @@
 <template>
-    <div id="show-blogs">
+<div id="show-blogs">
 
-        <h1 class="modsearch"><center>Module Search</center></h1>
-        <div class="searchbox">
-        <input type="text" v-model="search" placeholder="search module codes" class = "show-blogs"></div>
-        <div v-for="mods in filteredBlogs" class="single-blog">
-            <h2>{{ mods.code.toUpperCase() }}: {{mods.name.toUpperCase()}} </h2>
-            <h3> Tutors: </h3>
-
-            <div v-for="tut in mods.tutors" class="tutor-col">
-                <router-link v-bind:to="'/tutors/' + tut"><h2>{{ tut }}</h2></router-link>
-
+        <h1 class="modsearch"><center>Tutor: {{id}}</center></h1>
+        <div class="">
+                <div v-for="element in testlist" class="">
+                    <div v-for="tut in element.tutors" class="">
+                        <div v-if="tut === id">
+                            <h1>Name: {{id}} </h1>
+                            <h2>I am teaching {{element.code}} </h2>
+                            <h2> The name of the course is {{element.name}} </h2>
+                        </div>
+                    </div>
                 </div>
+
         </div>
     </div>
-
 
 </template>
 
 <script>
 import db from '@/firebase/init.js'
+
 export default {
     data () {
         return {
-            search: '',
-            testlist: [],
+            id: this.$route.params.tut,
+            test: "TEST",
+            testlist: []
+            
         }
     },
     methods: {
+        
     },
     created() {
         db.collection('testmodule').get().then(querySnapshot => {
@@ -47,11 +51,8 @@ export default {
         })
     },
     computed: {
-        filteredBlogs: function(){
-            return this.testlist.filter(everymod => {
-                return everymod.code.toUpperCase().match(this.search.toUpperCase());
-            });
-        }
+       
+        
     }
 }
 </script>
