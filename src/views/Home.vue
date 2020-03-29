@@ -1,9 +1,8 @@
 <template>
-<div>
   <v-container>
     <v-layout row>
       <v-flex md3>
-        <v-card flat class="card--flex-toolbar" color="transparent">
+        <v-card flat color="transparent">
           <v-container fluid grid-list-lg>
             <v-layout row wrap>
               <v-flex md>
@@ -45,9 +44,10 @@
                               v-model="rating"
                               :show-rating="false"
                               rounded-corners
-                              :star-size="45"
+                              :star-size="30"
                               inline
                             ></star-rating>
+                            <br />
                             <br />
                           </body>
                           <div class="review">
@@ -72,7 +72,15 @@
                 <v-card md6>
                   <v-card-text>You have no new messages.</v-card-text>
                   <v-card-actions>
-                    <v-btn color="#f1ba79" small tile outlined>View past messages</v-btn>
+                    <v-btn
+                      to="/chat"
+                      :style="{ align: 'center', color: '#FFFFFF' }"
+                      color="#F1BA79"
+                      small
+                      tile
+                      outlined
+                      >View past messages</v-btn
+                    >
                   </v-card-actions>
                 </v-card>
               </v-flex>
@@ -81,7 +89,7 @@
         </v-card>
       </v-flex>
 
-      <v-flex md6>
+      <v-flex md7>
         <v-card flat color="transparent">
           <v-container fluid grid-list-lg>
             <v-layout row wrap>
@@ -105,13 +113,17 @@
 
                 <tbody>
                   <tr v-for="student in students" v-bind:key="student.id">
-                    <td class="my-2">{{student.name}}</td>
+                    <td class="my-2">{{ student.name }}</td>
 
-                    <td>{{student.module}}</td>
+                    <td>{{ student.module }}</td>
 
                     <td>
-                      <v-btn class="mx-2" depressed small color="primary">Accept</v-btn>
-                      <v-btn class="mx-2" depressed small color="success">Send Message</v-btn>
+                      <v-btn class="mx-2" depressed small color="primary"
+                        >Accept</v-btn
+                      >
+                      <v-btn class="mx-2" depressed small color="success"
+                        >Send Message</v-btn
+                      >
                     </td>
                   </tr>
                 </tbody>
@@ -119,7 +131,7 @@
             </div>
           </div>
         </v-card>
-        <v-card flat class="card--flex-toolbar" color="transparent">
+        <v-card flat color="transparent">
           <v-container fluid grid-list-lg>
             <v-layout row wrap>
               <v-flex md8>
@@ -128,64 +140,129 @@
             </v-layout>
           </v-container>
         </v-card>
+        <v-card md6>
+          <div>
+            <v-sheet tile height="54" color="#F1BA79" class="d-flex">
+              <v-btn icon class="ma-2" @click="$refs.calendar.prev()">
+                <v-icon>keyboard_arrow_left</v-icon>
+              </v-btn>
+
+              <v-select
+                v-model="type"
+                :items="types"
+                outlined
+                hide-details
+                dense
+                class="ma-2"
+                label="View Type"
+              ></v-select>
+
+              <v-btn icon class="ma-2" @click="$refs.calendar.next()">
+                <v-icon>keyboard_arrow_right</v-icon>
+              </v-btn>
+            </v-sheet>
+            <v-sheet height="400">
+              <v-calendar
+                ref="calendar"
+                v-model="value"
+                :type="type"
+                :events="events"
+                :event-color="getEventColor"
+                @change="getEvents"
+              ></v-calendar>
+            </v-sheet></div
+        ></v-card>
       </v-flex>
     </v-layout>
   </v-container>
-</div>
 </template>
 
 <script>
-import { VueEditor } from "vue2-editor";
-import firebase from "firebase";
-
+import StarRating from 'vue-star-rating';
 export default {
-  name: "Modules",
+  name: 'app',
+  components: {
+    StarRating
+  },
   data() {
     return {
-      name: "Jon Tan",
-      course: "Year 4 Computer Science",
+      name: 'Jon Tan',
+      course: 'Year 4 Computer Science',
       rate: 10,
       paststudents: 25,
       currentstudents: 5,
       rating: 3,
+      type: 'month',
+      types: ['month', 'week', 'day', '4day'],
+      mode: 'stack',
+      modes: ['stack', 'column'],
+      weekday: [0, 1, 2, 3, 4, 5, 6],
+      weekdays: [
+        { text: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
+        { text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
+        { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
+        { text: 'Mon, Wed, Fri', value: [1, 3, 5] }
+      ],
+      value: '',
+      events: [],
+      colors: [
+        'blue',
+        'indigo',
+        'deep-purple',
+        'cyan',
+        'green',
+        'orange',
+        'grey darken-1'
+      ],
+      names: [
+        'Meeting',
+        'Holiday',
+        'PTO',
+        'Travel',
+        'Event',
+        'Birthday',
+        'Conference',
+        'Party'
+      ],
+
       links: [
         {
-          id: "1",
-          title: "Dashboard",
+          id: '1',
+          title: 'Dashboard',
           description:
-            "Get detailed anlytics to measure and analyze how users engage with your app",
-          color: "#F1BA79"
+            'Get detailed anlytics to measure and analyze how users engage with your app',
+          color: '#F1BA79'
         },
         {
-          id: "2",
-          title: "Storage",
+          id: '2',
+          title: 'Storage',
           description:
-            "Store and retrieve user-generated content, such as images, audio, and videos, without server-side code.",
-          color: "teal"
+            'Store and retrieve user-generated content, such as images, audio, and videos, without server-side code.',
+          color: 'teal'
         },
         {
-          id: "3",
-          title: "Notifications",
+          id: '3',
+          title: 'Notifications',
           description:
-            "Manage your notification campaigns and send messages to reach the right users at the right time",
-          color: "blue"
+            'Manage your notification campaigns and send messages to reach the right users at the right time',
+          color: 'blue'
         },
         {
-          id: "4",
-          title: "Authentification",
+          id: '4',
+          title: 'Authentification',
           description:
-            "Authenticate and manage users from a variety of providers without server-side-code",
-          color: "purple"
+            'Authenticate and manage users from a variety of providers without server-side-code',
+          color: 'purple'
         }
       ],
       students: [
         {
-          name: "Sarah",
-          module: "CS2030"
+          name: 'Sarah',
+          module: 'CS2030'
         },
         {
-          name: "Sean",
-          module: "BT2102"
+          name: 'Sean',
+          module: 'BT2102'
         }
       ],
       module: {
@@ -229,5 +306,10 @@ h3 {
   padding: 1em 0;
   color: gray;
   white-space: normal;
+}
+calender {
+  font-family: Roboto, sans-serif;
+  width: 100%;
+  height: 100%;
 }
 </style>
