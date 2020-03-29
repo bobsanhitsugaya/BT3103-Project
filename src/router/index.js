@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+
 //import Chat from '../Chat.vue'
 
 Vue.use(VueRouter)
@@ -62,6 +63,10 @@ const routes = [
         path: '/search',
         name: 'search',
         component: () => import('../views/Search.vue')
+    },
+    {
+        path: '/tutors/:tut',
+        component: () => import('../views/singleBlog.vue')
     },
     {
         path: '/profile',

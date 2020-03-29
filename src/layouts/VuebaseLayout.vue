@@ -263,7 +263,7 @@ import firebase from "firebase";
                     },
                     {
                         icon: 'search',
-                        title: 'Search',
+                        title: 'Module Search',
                         link: '/search'
                     },
                     {
