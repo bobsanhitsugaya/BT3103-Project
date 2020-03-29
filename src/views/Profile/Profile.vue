@@ -83,22 +83,99 @@
             </v-container>
           </v-card>
 
-            <v-card md6 >
-                <v-card-text v-if="!editing">
-                  <span class='text'>{{value}}</span>
-                </v-card-text>
-                <v-card-text v-if="editing">
-                  <textarea v-model="tempValue" class="input"/>
-                </v-card-text>
-                <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn v-if="!editing" @click="enableEditing">Edit</v-btn>
-                <v-btn v-if="editing" @click="disableEditing">Cancel</v-btn>
-                <v-btn v-if="editing" @click="saveEdit">Save</v-btn>
-                </v-card-actions>
-            </v-card>
+          <v-card class="modules">
+            <div class="container">
 
-            <v-card flat class="card--flex-toolbar" color="transparent">
+                <div class="module-test">
+
+                  <button @click="addNew" class="btn btn-primary float-right">Add Experience</button>
+
+                  <div class="table-responsive">
+                    
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Module</th>
+                            <th>Skill</th>
+                            <th>Modify</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr v-for="module in modules" v-bind:key="module.id" >
+                              <td>
+                                {{module.name}}
+                              </td>
+
+                              <td>
+                                {{module.skill}}
+                              </td>
+
+                              <td>
+
+                                <button class="btn btn-primary" @click="editModule(module)">Edit</button>
+                                <button class="btn btn-danger" @click="deleteModule(module)">Delete</button>
+                              </td>
+                            </tr>
+
+
+                        </tbody>
+                      </table>
+                  </div>
+
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="module" tabindex="-1" role="dialog" aria-labelledby="editLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editLabel">Add Experience</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+
+                      <div class="row">
+                        <!-- main module -->
+                        <div class="col-md-8">
+                          <div class="form-group">
+                            <input type="text" placeholder="Module Name" v-model="module.name" class="form-control">
+                          </div>
+                          <div class="form-group">
+                            <input type="text" placeholder="Module skill" v-model="module.skill" class="form-control">
+                          </div>
+
+                          <div class="form-group">
+                            <input type="text" @keyup.188="addTag" placeholder="Module tags" v-model="tag" class="form-control">
+                            
+                            <div  class="d-flex">
+                              <p v-for="tag in module.tags" :key="tag">
+                                  <span class="p-1">{{tag}}</span>
+                              </p>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button @click="addModule()" type="button" class="btn btn-primary" v-if="modal == 'new'">Save changes</button>
+                    <button @click="updateModule()" type="button" class="btn btn-primary" v-if="modal == 'edit'">Apply changes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+    
+          </v-card>
+
+          <v-card flat class="card--flex-toolbar" color="transparent">
             <v-container fluid grid-list-lg>
               <v-layout row wrap>
                 <v-flex md8>
@@ -133,9 +210,12 @@
 </template>
 
 <script>
+import { VueEditor } from "vue2-editor";
+import firebase from 'firebase';
+
 export default {
-  data() {
-    
+  name: "Modules",
+  data(){
     return {
       name: 'Jon Tan',
       course: 'Year 4 Computer Science',
@@ -173,27 +253,89 @@ export default {
           color: 'purple'
         }
       ],
-      value: 'Click Me!',
-      tempValue: null,
-      editing: false
-      
-    };
-  },
-  methods: {
-    enableEditing: function(){
-      this.tempValue = this.value;
-      this.editing = true;
-    },
-    disableEditing: function(){
-      this.tempValue = null;
-      this.editing = false;
-    },
-    saveEdit: function(){
-      // However we want to save it to the database
-      this.value = this.tempValue;
-      this.disableEditing();
+        modules: [],
+        module: {
+          name:null,
+          skill:null,
+          tags:[],
+        },
+        activeItem:null,
+        modal: null,
+        tag: null
     }
+  },
+
+  methods:{
+    addTag(){
+       this.module.tags.push(this.tag);
+       this.tag = "";
+    },
+    reset(){
+      this.module = {
+          name:null,
+          skill:null,
+          tags:[]
+      }
+    },
+    addNew(){
+        this.modal = 'new';
+        this.reset();
+        $('#module').modal('show');
+    },
+    updateModule(){
+
+          db.collection('modules').doc(module).update({
+                name: this.module.name,
+                skill:this.module.skill,
+                tags: this.tag
+            })
+              
+           $('#module').modal('hide');
+    },
+    editModule(module){
+      this.modal = 'edit';
+      this.module = module;
+      $('#module').modal('show');
+    },
+    deleteModule(doc){
+
+          db.collection('modules').doc(doc.id).delete()
+        
+    },
+    addModule(){
+
+      if(this.module.name != null && this.module.skill != null){
+                db.collection('modules').add({
+                name: this.module.name,
+                skill:this.module.skill,
+                tags: this.tag
+            }).then(()=>{
+                alert('Module created successfully')
+            }) 
+            } else {
+                alert('Enter blank first')
+            }    
+              
+      $('#module').modal('hide');
+    },
+    fetchModules(){
+            db.collection('modules').orderBy("name").onSnapshot((querySnapshot)=>{
+                let allModules = [];
+                querySnapshot.forEach(doc =>{
+                    allModules.push(doc.data())
+                })
+                this.modules= allModules;
+
+            })
+        },
+  
+  },
+
+  created(){
+
+  this.fetchModules();
   }
+
 };
 </script>
 

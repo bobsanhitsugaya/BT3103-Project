@@ -8,6 +8,7 @@ import { CarouselPlugin } from 'bootstrap-vue';
 import { NavbarPlugin } from 'bootstrap-vue';
 import './firebase/init';
 import firebase from 'firebase/app';
+import jQuery from 'jquery';
 
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -16,6 +17,8 @@ Vue.config.productionTip = false;
 Vue.use(VueChatScroll);
 Vue.use(CarouselPlugin);
 Vue.use(NavbarPlugin);
+window.$ = window.jQuery = jQuery;
+
 
 firebase.auth().onAuthStateChanged(user => {
   store.dispatch('fetchUser', user);
