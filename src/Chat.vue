@@ -16,21 +16,11 @@
             </div>
           </div>
           <div class="inbox_chat">
-            <div class="chat_list active_chat">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Lionel Lew <span class="chat_date">Dec 25</span></h5>
-                  <p>I love BT3103.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Mitchell <span class="chat_date">Dec 25</span></h5>
-                  <p>I love making webApps.</p>
+            <div v-for="contact in contacts" :key="contact" class="chat_list active_chat">
+              <div class ="chat people">
+                <div class ="chat_ib">
+                  <v-btn v-on:click="select(contact.name) ; fetchMessages()"> click </v-btn>
+                  <h5>{{contact.name}}</h5>
                 </div>
               </div>
             </div>
@@ -75,7 +65,9 @@ export default {
         return{
             message:null,
             messages:[],
-            authUser:{}
+            authUser:{},
+            receipient:"",
+            contacts:[]
         }
     },
     methods:{
@@ -85,7 +77,9 @@ export default {
                 db.collection('chat').add({
                 message: this.message,
                 author:this.authUser.email,
-                createdAt: new Date()
+                createdAt: new Date(),
+                receipient: this.receipient,
+                auth_rec: this.authUser.email.concat(this.receipient).length
             }).then(()=>{
                 this.scrollToBottom();
             }) 
@@ -95,7 +89,9 @@ export default {
             this.message = null;
         },
         fetchMessages(){
-            db.collection('chat').orderBy("createdAt").onSnapshot((querySnapshot)=>{
+          if(this.receipient){
+            db.collection('chat').where("auth_rec","==", firebase.auth().currentUser.email.concat(this.receipient).length)
+            .orderBy("createdAt").onSnapshot((querySnapshot)=>{
                 let allMessages = [];
                 querySnapshot.forEach(doc =>{
                     allMessages.push(doc.data())
@@ -105,12 +101,28 @@ export default {
                 setTimeout(()=>{
                     this.scrollToBottom();
                 },1000);
-
             })
+          } else {
+              console.log("no receipient")
+          }
+
         },
+        fetchContacts(){  
+          db.collection('users').doc(firebase.auth().currentUser.uid)
+            .collection('contacts').onSnapshot((querySnapshot)=>{
+              let allContacts = [];
+              querySnapshot.forEach(doc=>{
+                allContacts.push(doc.data())
+              })
+              this.contacts = allContacts
+            });
+          },
         scrollToBottom(){
             let box = document.querySelector('.msg_history')
             box.scrollTop=box.scrollHeight;
+        },
+        select: function(e){
+          this.receipient = e;
         }
     },
     created(){
@@ -121,7 +133,7 @@ export default {
                 this.authUser={}
             }
         })
-        this.fetchMessages();
+        this.fetchContacts();
     },
     beforeRouteEnter(to,from,next){
         next(vm=>{
@@ -186,15 +198,17 @@ img{ max-width:100%;}
 }
 .chat_ib {
   float: left;
-  padding: 0 0 0 15px;
+  padding: 0 0 0 0px;
   width: 88%;
+  font-size:30px;
+
 }
 
 .chat_people{ overflow:hidden; clear:both;}
 .chat_list {
   border-bottom: 1px solid #c4c4c4;
   margin: 0;
-  padding: 18px 16px 10px;
+  padding: 50px 20px 80px;
 }
 .inbox_chat { height: 550px; overflow-y: scroll;}
 

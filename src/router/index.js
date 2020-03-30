@@ -16,33 +16,12 @@ const routes = [
         path: '/dashboard',
         name: 'dashboard',
         component: () => import('../views/Dashboard/Layout'),
-        children: [
-            {
-                path: 'indicators',
-                name: 'dashboard.indicators',
-                component: () => import('../views/Dashboard/Indicators')
-            },
-            {
-                path: 'backup',
-                name: 'dashboard.backup',
-                component: () => import('../views/Dashboard/Backup')
-            },
-            {
-                path: 'logs',
-                name: 'dashboard.logs',
-                component: () => import('../views/Dashboard/Logs')
-            }
-        ]
     },
     {
         path: '/chat',
         name: 'Chat',
         component: () => import('../Chat.vue'),
-        // meta: { requiresAuth: true },
         props: true,
-        // beforeEnter: (to,from,next) => {
-        //         next({name: 'Chat', params: {name: user.data.displayName}});
-        // }
     },
     {
         path: '/login',

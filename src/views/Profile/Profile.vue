@@ -248,28 +248,155 @@
             <v-container fluid grid-list-lg>
               <v-layout row wrap>
                 <v-flex md8>
-                  <h2>Skills</h2>
+                  <h2>Skilldxddsssss</h2>
                 </v-flex>
               </v-layout>
             </v-container>
           </v-card>
 
-          <v-card md6>
-            <v-card-text>
-              <div>Word of the Day</div>
-              <p class="display-1 text--primary">
-                be•nev•o•lent
-              </p>
-              <p>adjective</p>
-              <div class="text--primary">
-                well meaning and kindly.<br />
-                "a benevolent smile"
+          <v-card class="skillset">
+            <div class="container">
+              <div class="skill-test">
+                <v-btn
+                  class="mx-2"
+                  depressed
+                  @click="addNew"
+                  color="#F1BA79"
+                  :style="{ float: 'right', color: '#FFFFFF' }"
+                  >Add Skills</v-btn
+                >
+
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Skills</th>
+                        <th>Modify</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr v-for="skill in skillset">
+                        <h4>
+                          {{ skill.name }}
+                        </h4>
+
+                        <p1>
+                          {{ skill.para }}
+                        </p1>
+
+                        <td>
+                          <v-btn
+                            class="mx-2"
+                            color="primary"
+                            @click="editSkill(module)"
+                          >
+                            Edit
+                          </v-btn>
+                          <v-btn
+                            class="mx-2"
+                            color="error"
+                            @click="deleteModule(module)"
+                          >
+                            Delete
+                          </v-btn>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn>Explore</v-btn>
-            </v-card-actions>
+            </div>
+
+            <!-- Modal -->
+            <div
+              class="modal fade"
+              id="module"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="editLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editLabel">Add Experience</h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <!-- main module -->
+                      <div class="col-md-8">
+                        <div class="form-group">
+                          <input
+                            type="text"
+                            placeholder="Module Name"
+                            v-model="module.name"
+                            class="form-control"
+                          />
+                        </div>
+                        <div class="form-group">
+                          <input
+                            type="text"
+                            placeholder="Module skill"
+                            v-model="module.skill"
+                            class="form-control"
+                          />
+                        </div>
+
+                        <div class="form-group">
+                          <input
+                            type="text"
+                            @keyup.188="addTag"
+                            placeholder="Module tags"
+                            v-model="tag"
+                            class="form-control"
+                          />
+
+                          <div class="d-flex">
+                            <p v-for="tag in module.tags" :key="tag">
+                              <span class="p-1">{{ tag }}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button
+                      @click="addModule()"
+                      type="button"
+                      class="btn btn-primary"
+                      v-if="modal == 'new'"
+                    >
+                      Save changes
+                    </button>
+                    <button
+                      @click="updateModule()"
+                      type="button"
+                      class="btn btn-primary"
+                      v-if="modal == 'edit'"
+                    >
+                      Apply changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </v-card>
         </v-flex>
       </v-layout>
@@ -332,7 +459,21 @@ export default {
       },
       activeItem: null,
       modal: null,
-      tag: null
+      tag: null,
+            skillset: [
+        {
+          name: 'Python',
+          para: '2 years of experience. Used Python to automate scripts for start-up.',
+        },
+        {
+          name: 'Tableau',
+          para: '1 year of experience. Built dashboard for data visualization.',
+        },
+        {
+          name: 'Dart',
+          para: '6 months of experience. Built and deployed a Flutter app on IOS.',
+        },
+      ],
     };
   },
   methods: {

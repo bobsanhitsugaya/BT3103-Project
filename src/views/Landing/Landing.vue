@@ -21,7 +21,7 @@
       <div class="container">
         <!-- <logo /> -->
         <h1 :class="$style.orange"><strong>
-          NUS FORUM
+          NUSTutors
         </strong></h1>
         <h4 :class="$style.orange" >
           Simple and easy way to connect NUS students
