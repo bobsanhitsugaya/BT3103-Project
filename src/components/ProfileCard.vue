@@ -1,10 +1,5 @@
-<template
-  ><v-container fluid grid-list-lg>
-    <v-layout row wrap>
-      <v-flex md>
-        <h2>NUSTutors</h2>
-      </v-flex>
-    </v-layout>
+<template>
+  <v-container fluid grid-list-lg style="margin:0px, padding:0px">
     <v-layout row wrap>
       <v-flex md>
         <v-hover>

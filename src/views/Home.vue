@@ -10,7 +10,7 @@
 
       <v-flex md9>
         <v-card flat color="transparent">
-          <v-container>
+          <v-container fluid grid-list-lg>
             <h2>{{ title }}</h2>
             <ToggleButton
               @change="swapCards"
@@ -20,9 +20,29 @@
             />
           </v-container>
         </v-card>
-        <v-card md12 v-show="!tutor">
-          <TopPicks />
-        </v-card>
+        <vue-grid v-show="!tutor" align="stretch" justify="between">
+          <vue-cell
+            v-for="tutor in tutors"
+            v-bind:key="tutor.name"
+            width="4of12"
+            ><TutorCard v-bind:tutor="tutor"
+          /></vue-cell>
+          <!-- <vue-cell width="4of12"><TopPicks /></vue-cell>
+          <vue-cell width="4of12"><TopPicks /></vue-cell> -->
+        </vue-grid>
+        <!-- <v-card
+          md12
+          v-show="!tutor"
+          flat
+          color="transparent"
+          style="margin:0px,max-width:20em"
+        >
+          <v-row nowrap>
+            <v-col><TopPicks /></v-col>
+            <v-col><TopPicks /></v-col>
+            <v-col><TopPicks /></v-col>
+          </v-row>
+        </v-card> -->
         <v-card v-show="tutor">
           <div class="container">
             <div class="table-responsive">
@@ -31,6 +51,7 @@
                   <tr>
                     <th>Student Name</th>
                     <th>Subject</th>
+                    <!-- <th>Date</th> -->
                     <th>Timeslot</th>
                     <th></th>
                   </tr>
@@ -74,11 +95,12 @@
 <script>
 import StarRating from 'vue-star-rating';
 import { ToggleButton } from 'vue-js-toggle-button';
-import TopPicks from '../components/TopPicks.vue';
 import ProfileCard from '../components/ProfileCard.vue';
 import MessageCard from '../components/MessageCard.vue';
 import Calender from '../components/Calender.vue';
 import firebase from 'firebase';
+import { VueGrid, VueCell } from 'vue-grd';
+import TutorCard from '../components/TutorCard.vue';
 export default {
   name: 'app',
   components: {
@@ -87,7 +109,10 @@ export default {
     TopPicks,
     ProfileCard,
     MessageCard,
-    Calender
+    Calender,
+    VueGrid,
+    VueCell,
+    TutorCard
   },
 
   data() {
@@ -95,7 +120,27 @@ export default {
       tutor: false,
       title: 'Top Picks for CS2030',
       student: null,
-      students: []
+      students: [],
+      tutors: [
+        {
+          name: 'Sam',
+          course: 'Year 4 Computer Science',
+          rate: 12,
+          rating: 5
+        },
+        {
+          name: 'Dylan',
+          course: 'Year 2 Business Analytics',
+          rate: 15,
+          rating: 5
+        },
+        {
+          name: 'Zen',
+          course: 'Year 3 Computer Science',
+          rate: 14,
+          rating: 5
+        }
+      ]
     };
   },
   methods: {
