@@ -13,7 +13,7 @@
       <br></br>
             <v-card>
 
-    <h1>Views by Category</h1>
+    <h1>Tutors by Modules</h1>
     <PieChart :styles="styles"/>
           </v-card>
                 <br></br>
