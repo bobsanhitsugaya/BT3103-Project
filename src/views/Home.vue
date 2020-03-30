@@ -58,7 +58,7 @@
                 </thead>
 
                 <tbody>
-                  <tr v-for="student in students" v-bind:key="student.id">
+                  <tr v-for="student in students" v-bind:key="student.name">
                     <td class="my-2">{{ student.name }}</td>
 
                     <td>{{ student.module }}</td>
@@ -106,7 +106,6 @@ export default {
   components: {
     StarRating,
     ToggleButton,
-    TopPicks,
     ProfileCard,
     MessageCard,
     Calender,
