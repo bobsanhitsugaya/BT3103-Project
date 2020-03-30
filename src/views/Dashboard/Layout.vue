@@ -1,56 +1,62 @@
 <template>
-    <div>
-        <v-toolbar
-                dense
-                tabs
-                color="primary"
-                dark
-        >
-            <v-toolbar-title class="pl-2">Dashboard</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-tabs
-                    v-model="tabs"
-                    color="transparent"
-                    slider-color="white"
-                    slot="extension"
-            >
-                <v-tab
-                        v-for="tabsItem in tabsItems"
-                        :key="tabsItem.id"
-                        :to="tabsItem.link"
-                >
-                    <span class="pl-2 pr-2">{{ tabsItem.title }}</span>
-                </v-tab>
-            </v-tabs>
-        </v-toolbar>
+  <div id="app">
+      <v-container>
+          <v-flex>
+              <v-hover>
+      <v-card>
+    <h1>Rates by Tutors by Modules</h1>
+    <LineChart :styles="styles"/>
+      </v-card>
+      </v-hover>
+          </v-flex>
 
-        <v-container>
-            <v-layout row>
-                <v-flex xs12 md8 offset-md2>
-                    <v-slide-y-transition mode="out-in">
-                        <router-view/>
-                    </v-slide-y-transition>
-                </v-flex>
-            </v-layout>
-        </v-container>
-    </div>
+      <br></br>
+            <v-card>
+
+    <h1>Views by Category</h1>
+    <PieChart :styles="styles"/>
+          </v-card>
+                <br></br>
+
+      <v-card>
+
+    <h1>Number of students per Tutor</h1>
+    <BarChart :styles="styles"/>
+          </v-card>
+</v-container>
+  </div>
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-                tabs: null,
-                tabsItems: [
-                    {id: 1, title: 'Indicators', link: 'indicators'},
-                    {id: 2, title: 'Backup', link: 'backup'},
-                    {id: 3, title: 'Logs', link: 'logs'}
-                ]
-            }
-        }
-    }
+import LineChart from "./LineChart";
+import PieChart from "./PieChart";
+import BarChart from "./BarChart";
+
+export default {
+  name: "Dashboard",
+  components: {
+    LineChart,
+    PieChart,
+    BarChart
+  },
+  data() {
+    return {
+      styles: {
+        height: `${this.height}px`,
+        position: 'relative'
+      }
+    };
+  },
+//   async created() {
+//     let resp = await fetch(
+//       "https://api.jsonbin.io/b/5e2b4f673d75894195de48ff/1"
+//     );
+//     let data = await resp.json();
+//     this.pageViews = data.pageViews;
+//     this.pageViewsByCategory = data.pageViewsByCategory;
+//     this.visitors = data.newVsReturning;
+//     this.loaded = true;
+//   }
+};
+
 </script>
-
-<style scoped>
-
-</style>
