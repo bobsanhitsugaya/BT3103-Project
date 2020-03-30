@@ -281,7 +281,6 @@
 import { VueEditor } from 'vue2-editor';
 import firebase from 'firebase';
 import StarRating from 'vue-star-rating';
-
 export default {
   name: 'Modules',
   components: {
@@ -336,7 +335,6 @@ export default {
       tag: null
     };
   },
-
   methods: {
     addTag() {
       this.module.tags.push(this.tag);
@@ -362,7 +360,6 @@ export default {
           skill: this.module.skill,
           tags: this.tag
         });
-
       $('#module').modal('hide');
     },
     editModule(module) {
@@ -389,7 +386,6 @@ export default {
       } else {
         alert('Enter blank first');
       }
-
       $('#module').modal('hide');
     },
     fetchModules() {
@@ -404,7 +400,6 @@ export default {
         });
     }
   },
-
   created() {
     this.fetchModules();
   }
@@ -432,10 +427,8 @@ h3 {
 .outine-2 {
   border: 2px solid white;
 }
-
 .card--flex-toolbar {
 }
-
 .review {
   text-decoration: underline;
   font-size: 0.8em;
@@ -443,7 +436,6 @@ h3 {
   color: gray;
   white-space: normal;
 }
-
 textarea {
   width: 100%;
 }
