@@ -11,7 +11,7 @@
                 class="profile"
               >
                 <div class="top-card">
-                  <v-avatar size="100" class="avatar">
+                  <v-avatar size="80" class="avatar">
                     <img
                       src="https://ptetutorials.com/images/user-profile.png"
                       alt="dog"
@@ -71,10 +71,10 @@ h3 {
   margin-top: 2.5rem;
 }
 .avatar {
-  margin: -3.5rem;
+  margin: -3rem;
 }
 .top-card {
-  height: 1rem;
+  height: 5rem;
   background-color: #f1ba79;
   display: flex;
   justify-content: center;

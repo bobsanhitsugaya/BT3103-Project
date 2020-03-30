@@ -8,7 +8,7 @@
             :class="`elevation-${hover ? 12 : 2}`"
             class="profile"
           >
-            <div class="top-card">
+            <div class="top-card" style="height:6.5em">
               <v-avatar size="100" class="avatar">
                 <img
                   src="https://i.pinimg.com/originals/57/3e/9e/573e9e53ee78e2a88c32d53bd8a5bfd2.jpg"
@@ -74,7 +74,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 h2 {
   color: #f1ba79;
   font-weight: bold;
@@ -86,7 +86,6 @@ h3 {
   margin: -3.5rem;
 }
 .top-card {
-  height: 8rem;
   background-color: #f1ba79;
   display: flex;
   justify-content: center;
