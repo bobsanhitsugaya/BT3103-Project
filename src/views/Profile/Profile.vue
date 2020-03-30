@@ -3,91 +3,21 @@
     <v-container>
       <v-layout row>
         <v-flex md3>
-          <v-card flat class="card--flex-toolbar" color="transparent">
+         <v-card flat class="card--flex-toolbar" color="transparent">
             <v-container fluid grid-list-lg>
               <v-layout row wrap>
-                <v-flex md>
-                  <h2>Your Profile</h2>
-                </v-flex>
-              </v-layout>
-              <v-layout row wrap>
-                <v-flex md>
-                  <v-hover>
-                    <v-card
-                      slot-scope="{ hover }"
-                      :class="`elevation-${hover ? 12 : 2}`"
-                      class="profile"
-                    >
-                      <div class="top-card">
-                        <v-avatar size="100" class="avatar"
-                          ><img
-                            src="https://i.pinimg.com/originals/57/3e/9e/573e9e53ee78e2a88c32d53bd8a5bfd2.jpg"
-                            alt="dog"
-                        /></v-avatar>
-                      </div>
-
-                      <v-card-title primary-title>
-                        <div>
-                          <h3>
-                            {{ name }}
-                          </h3>
-                          <div>
-                            <h6>{{ course }}</h6>
-                            <body>
-                              Hourly Rate: $ {{ rate }}/hr <br />
-                              Number of Past Tutees: {{ paststudents }}<br />
-                              Currently tutoring: {{ currentstudents }}<br />
-                              Rating:<br />
-                              <star-rating
-                                read-only
-                                v-model="rating"
-                                :show-rating="false"
-                                rounded-corners
-                                :star-size="30"
-                                inline
-                              ></star-rating>
-                              <br />
-                              <br />
-                            </body>
-                            <div class="review">
-                              click here to see reviews written by Tan's past
-                              tutees
-                            </div>
-                          </div>
-                        </div>
-                      </v-card-title>
-
-                      <v-card-actions> </v-card-actions>
-                    </v-card>
-                  </v-hover>
-                </v-flex>
-              </v-layout>
-            </v-container>
-            <v-container fluid grid-list-lg>
-              <v-layout row wrap>
-                <v-flex md>
-                  <h2>Message</h2>
-                  <br />
-                  <v-card md6>
-                    <v-card-text>You have no new messages.</v-card-text>
-                    <v-card-actions>
-                      <v-btn
-                        to="/chat"
-                        class="orange white--text"
-                        small
-                        tile
-                        outlined
-                        >View past messages</v-btn
-                      >
-                    </v-card-actions>
-                  </v-card>
+                <v-flex>
+                  <h2>Profile</h2>
                 </v-flex>
               </v-layout>
             </v-container>
           </v-card>
+            <ProfileCard />
+            <MessageCard />
+          </v-card>
         </v-flex>
 
-        <v-flex md6>
+        <v-flex md8>
           <v-card flat class="card--flex-toolbar" color="transparent">
             <v-container fluid grid-list-lg>
               <v-layout row wrap>
@@ -112,7 +42,7 @@
 
                 <div class="table-responsive">
                   <table class="table">
-                    <thead>
+                    <thead >
                       <tr>
                         <th>Module</th>
                         <th>Skill</th>
@@ -276,7 +206,7 @@
                     </thead>
 
                     <tbody>
-                      <tr v-for="skill in skillset">
+                      <tr v-for="skill in skillset" v-bind:key="skill">
                         <h4>
                           {{ skill.name }}
                         </h4>
@@ -408,19 +338,18 @@
 import { VueEditor } from 'vue2-editor';
 import firebase from 'firebase';
 import StarRating from 'vue-star-rating';
+import ProfileCard from '../../components/ProfileCard';
+import MessageCard from '../../components/MessageCard';
 export default {
   name: 'Modules',
   components: {
-    StarRating
+    StarRating,
+    ProfileCard,
+    MessageCard
   },
   data() {
     return {
-      name: 'Jon Tan',
-      course: 'Year 4 Computer Science',
-      rate: 10,
-      paststudents: 25,
-      currentstudents: 5,
-      rating: 3,
+      
       links: [
         {
           id: '1',
@@ -460,20 +389,22 @@ export default {
       activeItem: null,
       modal: null,
       tag: null,
-            skillset: [
+      skillset: [
         {
           name: 'Python',
-          para: '2 years of experience. Used Python to automate scripts for start-up.',
+          para:
+            '2 years of experience. Used Python to automate scripts for start-up.'
         },
         {
           name: 'Tableau',
-          para: '1 year of experience. Built dashboard for data visualization.',
+          para: '1 year of experience. Built dashboard for data visualization.'
         },
         {
           name: 'Dart',
-          para: '6 months of experience. Built and deployed a Flutter app on IOS.',
-        },
-      ],
+          para:
+            '6 months of experience. Built and deployed a Flutter app on IOS.'
+        }
+      ]
     };
   },
   methods: {
@@ -508,11 +439,15 @@ export default {
       this.module = module;
       $('#module').modal('show');
     },
-    deleteModule(doc) {
-      db.collection('modules')
-        .doc(doc.id)
-        .delete();
-    },
+    deleteModule(module) {
+      console.log(module.name);
+      console.log(db.collection('modules').where('name','==',module.name)
+      .get().then(function(querySnapshot) {
+  querySnapshot.forEach(function(doc) {
+    doc.ref.delete()
+  })}));
+}
+    ,
     addModule() {
       if (this.module.name != null && this.module.skill != null) {
         db.collection('modules')

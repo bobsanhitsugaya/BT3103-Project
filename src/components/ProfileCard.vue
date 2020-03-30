@@ -61,6 +61,7 @@ export default {
   components: {
     StarRating
   },
+
   data() {
     return {
       name: 'Jon Tan',
