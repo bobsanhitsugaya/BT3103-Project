@@ -5,11 +5,11 @@
         <div class="searchbox">
         <input type="text" v-model="search" placeholder="search module codes" class = "show-blogs"></div>
         <div v-for="mods in filteredBlogs" class="single-blog">
-            <h2>{{ mods.code.toUpperCase() }}: {{mods.name.toUpperCase()}} </h2>
+            <h1>{{ mods.code.toUpperCase() }}: {{mods.name.toUpperCase()}} </h1>
             <h3> Tutors: </h3>
 
             <div v-for="tut in mods.tutors" class="tutor-col">
-                <router-link v-bind:to="'/tutors/' + tut"><h2>{{ tut }}</h2></router-link>
+                <router-link v-bind:to="'/tutors/' + tut"><h4>{{ tut }}</h4></router-link>
 
                 </div>
         </div>
@@ -37,6 +37,7 @@ export default {
                     'code': doc.data().code,
                     'name': doc.data().name,
                     'tutors': doc.data().tutors,
+                    'modules': doc.data().modules,
                 }
                 console.log('Write succeeded!');
                 console.log(data);
@@ -48,7 +49,7 @@ export default {
     },
     computed: {
         filteredBlogs: function(){
-            return this.testlist.filter(everymod => {
+            return this.testlist.filter(everymod => {  
                 return everymod.code.toUpperCase().match(this.search.toUpperCase());
             });
         }
