@@ -18,7 +18,7 @@
             </v-list-tile-action>
             <v-list-tile-content v-if="!miniVariant">
               <v-list-tile-title>
-                <h3>NUSTutors</h3>
+                <h4>NUSTutors</h4>
               </v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action>
@@ -41,17 +41,15 @@
                 <v-icon>home</v-icon>
               </v-list-tile-action>
               <v-list-tile-content>
-                <v-list-tile-title>Project Overview</v-list-tile-title>
+                <v-list-tile-title>Home</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
           </v-list>
         </v-toolbar>
-        <span>Project Overview</span>
       </v-tooltip>
       <v-divider></v-divider>
 
       <v-list subheader :class="{ 'list-border-bottom': miniVariant }">
-        <v-subheader>ANALYTICS</v-subheader>
         <template v-for="item in analyticsItems">
           <v-tooltip right :disabled="!miniVariant">
             <v-list-tile

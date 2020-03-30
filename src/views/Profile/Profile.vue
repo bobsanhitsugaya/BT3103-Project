@@ -248,7 +248,7 @@
             <v-container fluid grid-list-lg>
               <v-layout row wrap>
                 <v-flex md8>
-                  <h2>Skilldxddsssss</h2>
+                  <h2>Skills</h2>
                 </v-flex>
               </v-layout>
             </v-container>
