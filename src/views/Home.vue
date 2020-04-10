@@ -76,7 +76,7 @@
                       <v-btn class="mx-2" depressed small color="primary"
                         >Accept</v-btn
                       >
-                      <v-btn class="mx-2" depressed small color="success"
+                      <v-btn v-on:click="select(student.name) ; addContact()" class="mx-2" depressed small color="success"
                         >Send Message</v-btn
                       >
                     </td>
@@ -165,7 +165,19 @@ export default {
       } else {
         this.title = 'Top Picks for CS2030';
       }
-    }
+    },
+    addContact(){
+      //add if statement to check if student is already in contacts
+      //student in student requests shud have their own unique IDs to read from fb
+      db.collection('users').doc(firebase.auth().currentUser.uid)
+        .collection('contacts').add({
+          name: this.student
+        }).then(this.$router.push({name: 'Chat'}));
+    },
+    select: function(e){
+          this.student = e;
+          console.log(this.student)
+        }
   },
   created() {
     this.fetchRequests();

@@ -1,4 +1,5 @@
 <template>
+
 <div class="container">
 <div class="messaging">
       <div class="inbox_msg">
@@ -19,7 +20,21 @@
             <div v-for="contact in contacts" :key="contact" class="chat_list active_chat">
               <div class ="chat people">
                 <div class ="chat_ib">
-                  <v-btn v-on:click="select(contact.name) ; fetchMessages()"> click </v-btn>
+                  <v-btn 
+                    class ="mx-2" 
+                    depressed 
+                    @click="select(contact.name) ; fetchMessages()" 
+                    color = "#F1BA79" 
+                    > Start messaging </v-btn
+                    >
+                        <v-btn
+                          class="mx-2"
+                          depressed
+                          @click="addNew"
+                          color="#F1BA79"
+                          :style="{ float: 'right'}"
+                          >Schedule session</v-btn
+                        >
                   <h5>{{contact.name}}</h5>
                 </div>
               </div>
@@ -48,12 +63,80 @@
           </div>
         </div>
       </div>
-      
-      
-      
-      
-    </div>
 </div>
+        <!-- Modal section -->
+           <!-- Modal -->
+          <div class = "modal">
+            <div
+              class="modal fade"
+              id="module"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="editLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editLabel">Add Experience</h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <!-- main module -->
+                      <div class="col-md-8">
+                        <div class="form-group">
+                          <input
+                            type="text"
+                            placeholder="Module Name"
+                            class="form-control"
+                          />
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button
+                      @click="addModule()"
+                      type="button"
+                      class="btn btn-primary"
+                      v-if="modal == 'new'"
+                    >
+                      Save changes
+                    </button>
+                    <button
+                      @click="updateModule()"
+                      type="button"
+                      class="btn btn-primary"
+                      v-if="modal == 'edit'"
+                    >
+                      Apply changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+</div>
+</div>
+  
+
+
+
 </template>
 
 <script>
@@ -67,7 +150,8 @@ export default {
             messages:[],
             authUser:{},
             receipient:"",
-            contacts:[]
+            contacts:[],
+            modal:null
         }
     },
     methods:{
@@ -123,7 +207,11 @@ export default {
         },
         select: function(e){
           this.receipient = e;
-        }
+        },
+        addNew() {
+         this.modal = 'new';
+         $('#module').modal('show');
+    }
     },
     created(){
         firebase.auth().onAuthStateChanged(user =>{
@@ -290,6 +378,13 @@ img{ max-width:100%;}
 .msg_history {
   height: 516px;
   overflow-y: auto;
+}
+
+.mx-2{
+  float: "left";
+  color: '#FFFFFF';
+}
+.modal{
 }
 
 </style>
