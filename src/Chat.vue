@@ -64,9 +64,7 @@
         </div>
       </div>
 </div>
-        <!-- Modal section -->
            <!-- Modal -->
-          <div class = "modal">
             <div
               class="modal fade"
               id="module"
@@ -78,7 +76,7 @@
               <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="editLabel">Add Experience</h5>
+                    <h5 class="modal-title" id="editLabel">Schedule a date!</h5>
                     <button
                       type="button"
                       class="close"
@@ -89,19 +87,13 @@
                     </button>
                   </div>
                   <div class="modal-body">
-                    <div class="row">
-                      <!-- main module -->
-                      <div class="col-md-8">
-                        <div class="form-group">
-                          <input
-                            type="text"
-                            placeholder="Module Name"
-                            class="form-control"
-                          />
-                        </div>
-                        </div>
-                      </div>
-                    </div>
+                  
+                    <v-date-picker v-model="date" no-title scrollable></v-date-picker> 
+                    <v-spacer></v-spacer>
+                    
+                    <v-time-picker v-model="time"></v-time-picker>
+                    
+                  
                   </div>
                   <div class="modal-footer">
                     <button
@@ -112,7 +104,7 @@
                       Close
                     </button>
                     <button
-                      @click="addModule()"
+                      @click="addSession()"
                       type="button"
                       class="btn btn-primary"
                       v-if="modal == 'new'"
@@ -132,7 +124,6 @@
               </div>
             </div>
 </div>
-</div>
   
 
 
@@ -141,6 +132,7 @@
 
 <script>
 import firebase from 'firebase'
+
 export default {
     name: 'Chat',
 
@@ -151,7 +143,11 @@ export default {
             authUser:{},
             receipient:"",
             contacts:[],
-            modal:null
+            modal:null,
+            date: new Date().toISOString().substr(0,10),
+            menu: false,
+            menu2:false,
+            time: new Date()
         }
     },
     methods:{
@@ -211,7 +207,14 @@ export default {
         addNew() {
          this.modal = 'new';
          $('#module').modal('show');
-    }
+        },
+        addSession(){
+          db.collection('scheduledSessions').add({
+            date:this.submittableDateTime,
+          }).then(()=>{
+            this.modal=null;
+          });
+        }
     },
     created(){
         firebase.auth().onAuthStateChanged(user =>{
@@ -222,6 +225,21 @@ export default {
             }
         })
         this.fetchContacts();
+    },
+    computed: {
+      submittableDateTime(){
+        const date = new Date(this.date)
+        if(typeof this.time === "string"){
+          const hours = this.time.match(/^(\d+)/)[1]
+          const minutes = this.time.match(/:(\d+)/)[1]
+          date.setHours(hours)
+          date.setMinutes(minutes)
+        } else{
+          date.setHours(this.time.getHours())
+          date.setMinutes(this.time.getMinutes())
+        }
+        return date
+      }
     },
     beforeRouteEnter(to,from,next){
         next(vm=>{
@@ -384,7 +402,9 @@ img{ max-width:100%;}
   float: "left";
   color: '#FFFFFF';
 }
-.modal{
+.modal-body{
+  align-items: center;
+  align-self: center;
 }
 
 </style>
