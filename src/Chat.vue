@@ -87,10 +87,18 @@
                     </button>
                   </div>
                   <div class="modal-body">
-                  
+                    
+                    Module
+                    <input class= "mod_input" type="text" v-model="module">
+                    <v-spacer></v-spacer>
+                    <br/>
+
+                    Date
+                    <br/>
                     <v-date-picker v-model="date" no-title scrollable></v-date-picker> 
                     <v-spacer></v-spacer>
-                    
+                    Time
+                    <br/>
                     <v-time-picker v-model="time"></v-time-picker>
                     
                   
@@ -147,7 +155,8 @@ export default {
             date: new Date().toISOString().substr(0,10),
             menu: false,
             menu2:false,
-            time: new Date()
+            time: new Date(),
+            module: null
         }
     },
     methods:{
@@ -209,8 +218,12 @@ export default {
          $('#module').modal('show');
         },
         addSession(){
-          db.collection('scheduledSessions').add({
+          db.collection('studentrequests').doc(firebase.auth().currentUser.uid).set({
             date:this.submittableDateTime,
+            author: firebase.auth().currentUser.email,
+            receipient: this.receipient,
+            created: new Date(),
+            module: this.module
           }).then(()=>{
             this.modal=null;
           });
@@ -405,6 +418,19 @@ img{ max-width:100%;}
 .modal-body{
   align-items: center;
   align-self: center;
+  padding: 15px 22px;
+  margin: 10px 5px;
+  box-sizing: border-box;
 }
+
+.mod_input{
+  width:100%;
+  height: 20px;
+  padding:15px 22px;
+  margin: 10px 5px;
+  box-sizing: border-box;
+  border: 1px solid #000 ;
+}
+
 
 </style>

@@ -14,7 +14,6 @@
           </v-card>
             <ProfileCard />
             <MessageCard />
-          </v-card>
         </v-flex>
 
         <v-flex md8>
@@ -28,13 +27,13 @@
             </v-container>
           </v-card>
 
-          <v-card class="modules">
+          <v-card class="experiences">
             <div class="container">
-              <div class="module-test">
+              <div class="experience-test">
                 <v-btn
                   class="mx-2"
                   depressed
-                  @click="addNew"
+                  @click="addNewExperience"
                   color="#F1BA79"
                   :style="{ float: 'right', color: '#FFFFFF' }"
                   >Add Experience</v-btn
@@ -51,27 +50,27 @@
                     </thead>
 
                     <tbody>
-                      <tr v-for="module in modules" v-bind:key="module.id">
+                      <tr v-for="experience in experiences" v-bind:key="experience">
                         <td>
-                          {{ module.name }}
+                          {{ experience.code }}
                         </td>
 
                         <td>
-                          {{ module.skill }}
+                          {{ experience.skill }}
                         </td>
 
                         <td>
                           <v-btn
                             class="mx-2"
                             color="primary"
-                            @click="editModule(module)"
+                            @click="editExperience(experience)"
                           >
                             Edit
                           </v-btn>
                           <v-btn
                             class="mx-2"
                             color="error"
-                            @click="deleteModule(module)"
+                            @click="deleteExperience(experience)"
                           >
                             Delete
                           </v-btn>
@@ -83,10 +82,10 @@
               </div>
             </div>
 
-            <!-- Modal -->
+            <!-- Experience Modal -->
             <div
               class="modal fade"
-              id="module"
+              id="experience"
               tabindex="-1"
               role="dialog"
               aria-labelledby="editLabel"
@@ -95,7 +94,8 @@
               <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="editLabel">Add Experience</h5>
+                    <h5 class="modal-title" id="editLabel" v-if="modal == 'new'" >Add Experience</h5>
+                    <h5 class="modal-title" id="editLabel" v-if="modal == 'edit'" >Edit Experience</h5>
                     <button
                       type="button"
                       class="close"
@@ -113,7 +113,7 @@
                           <input
                             type="text"
                             placeholder="Module Name"
-                            v-model="module.name"
+                            v-model="experience.code"
                             class="form-control"
                           />
                         </div>
@@ -121,26 +121,11 @@
                           <input
                             type="text"
                             placeholder="Module skill"
-                            v-model="module.skill"
+                            v-model="experience.skill"
                             class="form-control"
                           />
                         </div>
 
-                        <div class="form-group">
-                          <input
-                            type="text"
-                            @keyup.188="addTag"
-                            placeholder="Module tags"
-                            v-model="tag"
-                            class="form-control"
-                          />
-
-                          <div class="d-flex">
-                            <p v-for="tag in module.tags" :key="tag">
-                              <span class="p-1">{{ tag }}</span>
-                            </p>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -153,7 +138,7 @@
                       Close
                     </button>
                     <button
-                      @click="addModule()"
+                      @click="addExperience()"
                       type="button"
                       class="btn btn-primary"
                       v-if="modal == 'new'"
@@ -161,7 +146,7 @@
                       Save changes
                     </button>
                     <button
-                      @click="updateModule()"
+                      @click="updateExperience()"
                       type="button"
                       class="btn btn-primary"
                       v-if="modal == 'edit'"
@@ -190,7 +175,7 @@
                 <v-btn
                   class="mx-2"
                   depressed
-                  @click="addNew"
+                  @click="newSkill"
                   color="#F1BA79"
                   :style="{ float: 'right', color: '#FFFFFF' }"
                   >Add Skills</v-btn
@@ -212,21 +197,21 @@
                         </h4>
 
                         <p1>
-                          {{ skill.para }}
+                          {{ skill.detail }}
                         </p1>
 
                         <td>
                           <v-btn
                             class="mx-2"
                             color="primary"
-                            @click="editSkill(module)"
+                            @click="editSkill(skill)"
                           >
                             Edit
                           </v-btn>
                           <v-btn
                             class="mx-2"
                             color="error"
-                            @click="deleteModule(module)"
+                            @click="deleteSkill(skill)"
                           >
                             Delete
                           </v-btn>
@@ -238,10 +223,10 @@
               </div>
             </div>
 
-            <!-- Modal -->
+            <!-- Skills Modal -->
             <div
               class="modal fade"
-              id="module"
+              id="skill"
               tabindex="-1"
               role="dialog"
               aria-labelledby="editLabel"
@@ -250,7 +235,7 @@
               <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="editLabel">Add Experience</h5>
+                    <h5 class="modal-title" id="editLabel">Add Skill</h5>
                     <button
                       type="button"
                       class="close"
@@ -267,34 +252,18 @@
                         <div class="form-group">
                           <input
                             type="text"
-                            placeholder="Module Name"
-                            v-model="module.name"
+                            placeholder="Skill Name"
+                            v-model="skill.name"
                             class="form-control"
                           />
                         </div>
                         <div class="form-group">
                           <input
                             type="text"
-                            placeholder="Module skill"
-                            v-model="module.skill"
+                            placeholder="A small write-up about your skill"
+                            v-model="skill.detail"
                             class="form-control"
                           />
-                        </div>
-
-                        <div class="form-group">
-                          <input
-                            type="text"
-                            @keyup.188="addTag"
-                            placeholder="Module tags"
-                            v-model="tag"
-                            class="form-control"
-                          />
-
-                          <div class="d-flex">
-                            <p v-for="tag in module.tags" :key="tag">
-                              <span class="p-1">{{ tag }}</span>
-                            </p>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -308,7 +277,7 @@
                       Close
                     </button>
                     <button
-                      @click="addModule()"
+                      @click="addSkill()"
                       type="button"
                       class="btn btn-primary"
                       v-if="modal == 'new'"
@@ -316,7 +285,7 @@
                       Save changes
                     </button>
                     <button
-                      @click="updateModule()"
+                      @click="updateSkill()"
                       type="button"
                       class="btn btn-primary"
                       v-if="modal == 'edit'"
@@ -349,135 +318,159 @@ export default {
   },
   data() {
     return {
-      
-      links: [
-        {
-          id: '1',
-          title: 'Dashboard',
-          description:
-            'Get detailed anlytics to measure and analyze how users engage with your app',
-          color: '#F1BA79'
-        },
-        {
-          id: '2',
-          title: 'Storage',
-          description:
-            'Store and retrieve user-generated content, such as images, audio, and videos, without server-side code.',
-          color: 'teal'
-        },
-        {
-          id: '3',
-          title: 'Notifications',
-          description:
-            'Manage your notification campaigns and send messages to reach the right users at the right time',
-          color: 'blue'
-        },
-        {
-          id: '4',
-          title: 'Authentification',
-          description:
-            'Authenticate and manage users from a variety of providers without server-side-code',
-          color: 'purple'
-        }
-      ],
-      modules: [],
-      module: {
-        name: null,
+      experiences: [],
+      experience: {
+        code: null,
         skill: null,
-        tags: []
+        id: null
+      },
+      skillset: [],
+      skill: {
+        name: null,
+        detail: null,
+        id: null
       },
       activeItem: null,
       modal: null,
-      tag: null,
-      skillset: [
-        {
-          name: 'Python',
-          para:
-            '2 years of experience. Used Python to automate scripts for start-up.'
-        },
-        {
-          name: 'Tableau',
-          para: '1 year of experience. Built dashboard for data visualization.'
-        },
-        {
-          name: 'Dart',
-          para:
-            '6 months of experience. Built and deployed a Flutter app on IOS.'
-        }
-      ]
     };
   },
   methods: {
-    addTag() {
-      this.module.tags.push(this.tag);
-      this.tag = '';
-    },
-    reset() {
-      this.module = {
-        name: null,
+    resetExperience() {
+      this.experience = {
+        code: null,
         skill: null,
-        tags: []
+        id: null
       };
     },
-    addNew() {
+    addNewExperience() {
       this.modal = 'new';
-      this.reset();
-      $('#module').modal('show');
+      this.resetExperience();
+      $('#experience').modal('show');
     },
-    updateModule() {
-      db.collection('modules')
-        .doc(module)
-        .update({
-          name: this.module.name,
-          skill: this.module.skill,
-          tags: this.tag
-        });
-      $('#module').modal('hide');
+    updateExperience() {
+      db.collection('users').doc(firebase.auth().currentUser.uid).collection("modules").where('id','==',this.experience.id)
+      .get().then(querySnapshot => {
+        return querySnapshot.docs[0].ref.update({
+          code: this.experience.code,
+          skill: this.experience.skill
+        })
+      }).then(() => {this.fetchEverything()});
+      $('#experience').modal('hide');
     },
-    editModule(module) {
+    editExperience(experience) {
       this.modal = 'edit';
-      this.module = module;
-      $('#module').modal('show');
+      this.experience = experience;
+      $('#experience').modal('show');
     },
-    deleteModule(module) {
-      console.log(module.name);
-      console.log(db.collection('modules').where('name','==',module.name)
-      .get().then(function(querySnapshot) {
-  querySnapshot.forEach(function(doc) {
-    doc.ref.delete()
-  })}));
-}
+    deleteExperience(experience) {
+      db.collection('users').doc(firebase.auth().currentUser.uid).collection("modules").where('id','==',experience.id)
+      .get().then(querySnapshot => {
+      return querySnapshot.docs[0].ref.delete().then(() => {
+      this.fetchEverything()
+      })
+  });
+    }
     ,
-    addModule() {
-      if (this.module.name != null && this.module.skill != null) {
-        db.collection('modules')
-          .add({
-            name: this.module.name,
-            skill: this.module.skill,
-            tags: this.tag
-          })
+    addExperience() {
+      this.experience.id = new Date();
+      if (this.experience.code != null && this.experience.skill != null) {
+        db.collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('modules')
+          .add(this.experience)
           .then(() => {
             alert('Module created successfully');
           });
       } else {
         alert('Enter blank first');
       }
-      $('#module').modal('hide');
+      this.fetchEverything();
+      $('#experience').modal('hide');
     },
-    fetchModules() {
-      db.collection('modules')
-        .orderBy('name')
-        .onSnapshot(querySnapshot => {
-          let allModules = [];
+    fetchEverything() {
+
+        db.collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('modules')
+        .get()
+        .then(querySnapshot => {
+          let allExperiences = [];
           querySnapshot.forEach(doc => {
-            allModules.push(doc.data());
+            allExperiences.push(doc.data());
           });
-          this.modules = allModules;
+          this.experiences = allExperiences;
         });
+
+        db.collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('skills')
+        .get()
+        .then(querySnapshot => {
+          let allSkills = [];
+          querySnapshot.forEach(doc => {
+            allSkills.push(doc.data());
+          });
+          this.skillset = allSkills;
+        });
+
+        console.log('fetched');
+
+    },
+      resetSkill() {
+      this.skill = {
+        name: null,
+        detail: null,
+        id: null
+      };
+    },
+    newSkill() {
+      this.modal = 'new';
+      this.resetSkill();
+      $('#skill').modal('show');
+    },
+    updateSkill() {
+      db.collection('users').doc(firebase.auth().currentUser.uid).collection("skills").where('id','==',this.skill.id)
+      .get().then(querySnapshot => {
+        return querySnapshot.docs[0].ref.update({
+          name: this.skill.name,
+          detail: this.skill.detail
+        })
+      }).then(() => {this.fetchEverything()});
+      $('#skill').modal('hide');
+    },
+    editSkill(skill) {
+      this.modal = 'edit';
+      this.skill = skill;
+      $('#skill').modal('show');
+    },
+    deleteSkill(skill) {
+      db.collection('users').doc(firebase.auth().currentUser.uid).collection("skills").where('id','==',skill.id)
+      .get().then(querySnapshot => {
+      return querySnapshot.docs[0].ref.delete().then(() => {
+      this.fetchEverything()
+      })
+  });
     }
+    ,
+    addSkill() {
+      this.skill.id = new Date();
+      if (this.skill.name != null && this.skill.detail != null) {
+        db.collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('skills')
+          .add(this.skill)
+          .then(() => {
+            alert('Skill created successfully');
+          });
+      } else {
+        alert('Enter blank first');
+      }
+      this.fetchEverything();
+      $('#skill').modal('hide');
+    },
   },
   created() {
-    this.fetchModules();
+    this.fetchEverything();
   }
 };
 </script>
