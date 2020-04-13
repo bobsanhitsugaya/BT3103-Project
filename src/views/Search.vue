@@ -30,7 +30,7 @@ export default {
     methods: {
     },
     created() {
-        db.collection('testmodule').get().then(querySnapshot => {
+        db.collection('modules').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
                 const data = {
                     'id': doc.id,
@@ -65,8 +65,8 @@ export default {
     
 }
 .single-blog{
-    padding: 20px;
-    margin: 20px 0;
+    padding: 15px;
+    margin: 25px 0;
     box-sizing: border-box;
     background: #eee;
 }
@@ -75,6 +75,7 @@ export default {
     background-color: #ffffff;
     position: absolute;
     left: 50%;
+    top: 7.5%;
     transform: translate(-50%,-50%);
     background: #f07008;
     height: 40px;

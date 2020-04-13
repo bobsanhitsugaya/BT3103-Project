@@ -7,7 +7,7 @@
             <v-container fluid grid-list-lg>
               <v-layout row wrap>
                 <v-flex md>
-                  <h2>Your Profile</h2>
+                  <h2>Tutor Profile</h2>
                 </v-flex>
               </v-layout>
               <v-layout row wrap>
@@ -27,18 +27,14 @@
                       </div>
 
                       <v-card-title primary-title>
-                        <div v-for="element in testlist" class="">
-                    <div v-for="tut in element.tutors" class="">
-                        <div v-if="tut === id">
-                          <h3>
-                            {{ id }}
-                          </h3>
+                        <div v-for="element in testlist" style="text-align:center">
+                          <h3>{{element.username}}   </h3>
+  
                           <div>
-                            <h6> {{ element.code}} </h6>
                             <body>
-                              Hourly Rate: $  {{element.rates}}/hr <br />
-                              Number of Past Tutees:  {{element.past}} students <br />
-                              Currently tutoring:  {{element.current}} students <br />
+                              {{element.course}}, Year {{element.year}}, School of {{element.faculty}}<br/>
+                              Hourly Rate: $  {{element.rate}}/hr <br />
+                              {{element.email}} <br/>
                               Rating:<br />
                               <star-rating
                                 read-only
@@ -54,8 +50,6 @@
                             <div class="review">
                               click here to see reviews written by Tan's past
                               tutees
-                            </div>
-                            </div>
                             </div>
                           </div>
                         </div>
@@ -110,10 +104,11 @@
                 <div class="table-responsive">
                   <table class="table">
                       
-                    <thead>
+                    <thead id='testcss'>
                      
                       <tr>
-                        <th>Modules</th>                        
+                        <th>Modules</th>
+                        <th>Skill Level</th>
                         
                       </tr>
                       
@@ -121,22 +116,20 @@
                     </thead>
 
                     <tbody v-for="element in testlist">
+                      
                       <!-- <div v-for="element in testlist" style="width:'inherit"> -->
-                        
-                            <div v-for="tut in element.tutors" style="width:'inherit">
-                                <div v-if="tut === id" style="width:'inherit">
-                                    <tr v-for="modz in element.modules" style="width:'inherit">
-                                        <td>
-                                        {{modz}}
-                                        </td>
-                                        
-                                           
+                            <tr v-for="mods in element.experience" style="width:'inherit">
+                                <td id='testcss'> 
+                                  {{mods.module}}
+                                  </td>
+
+                                  <td id="testcss">
+                                    {{mods.skill}}
+                                    </td>
+
                           
-                                    </tr>
-                            
-                                </div>
+                          </tr>
                           
-                          </div>
                         
 
                         
@@ -152,6 +145,15 @@
 
             </v-card>
 
+          <v-card flat class="card--flex-toolbar" color="transparent">
+            <v-container fluid grid-list-lg>
+              <v-layout row wrap>
+                <v-flex md8>
+                  <h2>Skills</h2>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card>
           
           <v-card class="skillset">
             <div class="container">
@@ -166,19 +168,19 @@
                     </thead>
 
                     <tbody>
-                      <tr v-for="skill in skillset">
-                        <td>
-                        <h4>
-                          {{ skill.name }}
-                        </h4>
+                      <tr v-for="element in testlist">
+                        <div v-for="skill in element.skills" id="skillsbreaker">
+                        <h3 id="skillsheader">
+                          {{ skill.name.toUpperCase() }} 
+                        </h3>
 
-                        <p1>
-                          {{ skill.para }}
+                        <p1 id = 'skillsdetail'>
+                          {{ skill.detail }}
                         </p1>
 
                         
                           
-                        </td>
+                        </div>
                       </tr>
                     </tbody>
                   </table>
@@ -213,20 +215,7 @@ export default {
             test: "TEST",
             testlist: [],
             rating:4,
-            skillset: [
-        {
-          name: 'Python',
-          para: '2 years of experience. Used Python to automate scripts for start-up.',
-        },
-        {
-          name: 'Tableau',
-          para: '1 year of experience. Built dashboard for data visualization.',
-        },
-        {
-          name: 'Dart',
-          para: '6 months of experience. Built and deployed a Flutter app on IOS.',
-        },
-      ],
+            
             
         }
     },
@@ -234,21 +223,26 @@ export default {
         
     },
     created() {
-        db.collection('testmodule').get().then(querySnapshot => {
+        db.collection('users').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
                 const data = {
-                    'id': doc.id,
-                    'code': doc.data().code,
-                    'name': doc.data().name,
-                    'tutors': doc.data().tutors,
-                    'modules': doc.data().modules,
-                    'rates': doc.data().rates,
-                    'past':doc.data().past,
-                    'current':doc.data().current,
+                    'docid': doc.id,
+                    'username' : doc.data().username,
+                    'course': doc.data().course,
+                    'email': doc.data().email,
+                    'experience': doc.data().experience,
+                    'faculty': doc.data().faculty,
+                    'rate': doc.data().rate,
+                    'skills': doc.data().skills,
+                    'tutor': doc.data().tutor,
+                    'year': doc.data().year,
+
+
                 }
-                console.log('Write succeeded!');
-                console.log(data);
-                this.testlist.push(data);
+                if (data.username == this.id) {
+                  console.log("Success")
+                  this.testlist.push(data)
+                }
                 
 
 
@@ -263,8 +257,24 @@ export default {
 </script>
 
 <style>
+#skillsheader{
+  color: #192666;
+  margin: 10px;
+}
 
+#skillsdetail{
+  margin: 20px
+}
 
+#skillsbreaker{
+  text-align: left;
+  border-bottom: 1.5px dashed #bbb;
+  padding-bottom:10px;
+}
+
+#testcss {
+  text-align: center;
+}
 #show-blogs{
     max-width: 800px;
     margin: 0px auto;
@@ -301,7 +311,7 @@ h2 {
   font-weight: bold;
 }
 h3 {
-  margin-top: 2.5rem;
+  margin-top: 3rem;
 }
 .avatar {
   margin: -3.5rem;
