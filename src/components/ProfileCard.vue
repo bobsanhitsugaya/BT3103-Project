@@ -1,62 +1,57 @@
 <template>
-  <v-container fluid grid-list-lg style="margin:0px, padding:0px">
-    <v-layout row wrap>
-      <v-flex md>
-        <v-hover>
-          <v-card
-            slot-scope="{ hover }"
-            :class="`elevation-${hover ? 12 : 2}`"
-            class="profile"
-          >
-            <div class="top-card" style="height:6.5em">
-              <v-avatar size="100" class="avatar">
-                <img
-                  src="https://i.pinimg.com/originals/57/3e/9e/573e9e53ee78e2a88c32d53bd8a5bfd2.jpg"
-                  alt="dog"
-                />
-              </v-avatar>
-            </div>
+<v-container fluid grid-list-lg style="margin:0px, padding:0px">
+  <v-layout row wrap>
+    <v-flex md>
+      <v-hover>
+        <v-card slot-scope="{ hover }" :class="`elevation-${hover ? 12 : 2}`" class="profile">
+          <div class="top-card" style="height:6.5em">
+            <v-avatar size="100" class="avatar">
+              <img
+                src="https://i.pinimg.com/originals/57/3e/9e/573e9e53ee78e2a88c32d53bd8a5bfd2.jpg"
+                alt="dog"
+              />
+            </v-avatar>
+          </div>
 
-            <v-card-title primary-title>
+          <v-card-title primary-title>
+            <div>
+              <h3>{{ name }}</h3>
               <div>
-                <h3>{{ name }}</h3>
-                <div>
-                  <h6>{{ course }}</h6>
-                  <body>
-                    Hourly Rate: $ {{ rate }}/hr
-                    <br />
-                    Number of Past Tutees: {{ paststudents }}
-                    <br />
-                    Currently tutoring: {{ currentstudents }} <br />Rating:
-                    <br />
-                    <star-rating
-                      read-only
-                      v-model="rating"
-                      :show-rating="false"
-                      rounded-corners
-                      :star-size="30"
-                      inline
-                    ></star-rating>
-                    <br />
-                    <br />
-                  </body>
-                  <div class="review">
-                    click here to see reviews written by Tan's past tutees
-                  </div>
-                </div>
+                <h6>{{ course }}</h6>
+                <body>
+                  Hourly Rate: $ {{ rate }}/hr
+                  <br />
+                  Number of Students: {{ nstudents }}
+                  <br />Rating:
+                  <br />
+                  <star-rating
+                    read-only
+                    v-model="rating"
+                    :show-rating="false"
+                    rounded-corners
+                    :star-size="30"
+                    inline
+                  ></star-rating>
+                  <br />
+                  <br />
+                </body>
+                <div class="review">click here to see reviews written by Tan's past tutees</div>
               </div>
-            </v-card-title>
+            </div>
+          </v-card-title>
 
-            <v-card-actions></v-card-actions>
-          </v-card>
-        </v-hover>
-      </v-flex>
-    </v-layout>
-  </v-container>
+          <v-card-actions></v-card-actions>
+        </v-card>
+      </v-hover>
+    </v-flex>
+  </v-layout>
+</v-container>
 </template>
 
 <script>
-import StarRating from 'vue-star-rating';
+import StarRating from "vue-star-rating";
+import firebase from "firebase";
+
 export default {
   components: {
     StarRating
@@ -64,13 +59,52 @@ export default {
 
   data() {
     return {
-      name: 'Jon Tan',
-      course: 'Year 4 Computer Science',
-      rate: 10,
-      paststudents: 25,
-      currentstudents: 5,
-      rating: 3
+      name: null,
+      course: null,
+      rate: "-",
+      nstudents: "-",
+      rating: 0
     };
+  },
+  methods: {
+    fetchUser() {
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          // User is signed in.
+          var db = firebase.firestore();
+          var docRef = db.collection("users").doc(user.uid);
+          docRef
+            .get()
+            .then(doc => {
+              if (doc && doc.exists) {
+                const myData = doc.data();
+                console.log(myData);
+                this.course = myData.course;
+                this.name = myData.username;
+                if (myData.tutor) {
+                  this.rate = myData.rate;
+                  this.rating = myData.rating;
+                  docRef
+                    .collection("students")
+                    .get()
+                    .then(snap => {
+                      this.nstudents = snap.size;
+                      console.log(snap);
+                    });
+                }
+              }
+            })
+            .catch(error => {
+              console.log("Got an error: ", error);
+            });
+        } else {
+          console.log("not signed in");
+        }
+      });
+    }
+  },
+  created() {
+    this.fetchUser();
   }
 };
 </script>
