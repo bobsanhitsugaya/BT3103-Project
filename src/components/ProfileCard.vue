@@ -17,7 +17,7 @@
             <div>
               <h3>{{ name }}</h3>
               <div>
-                <h6>{{ course }}</h6>
+                <h6>Year {{year}} {{ course }}</h6>
                 <body>
                   Hourly Rate: $ {{ rate }}/hr
                   <br />
@@ -60,6 +60,7 @@ export default {
   data() {
     return {
       name: null,
+      year: "",
       course: null,
       rate: "-",
       nstudents: "-",
@@ -81,6 +82,7 @@ export default {
                 console.log(myData);
                 this.course = myData.course;
                 this.name = myData.username;
+                this.year = myData.year;
                 if (myData.tutor) {
                   this.rate = myData.rate;
                   this.rating = myData.rating;
