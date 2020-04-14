@@ -15,18 +15,18 @@
 
           <v-card-title primary-title>
             <div>
-              <h3>{{ name }}</h3>
+              <h3>{{ tutor.name }}</h3>
               <div>
-                <h6>Year {{year}} {{ course }}</h6>
+                <h6>Year {{tutor.year}} {{ tutor.course }}</h6>
                 <body>
-                  Hourly Rate: $ {{ rate }}/hr
+                  Hourly Rate: $ {{ tutor.rate }}/hr
                   <br />
-                  Number of Students: {{ nstudents }}
+                  Number of Students: {{ tutor.nstudents }}
                   <br />Rating:
                   <br />
                   <star-rating
                     read-only
-                    v-model="rating"
+                    v-model="tutor.rating"
                     :show-rating="false"
                     rounded-corners
                     :star-size="30"
@@ -57,57 +57,7 @@ export default {
     StarRating
   },
 
-  data() {
-    return {
-      name: null,
-      year: "",
-      course: null,
-      rate: "-",
-      nstudents: "-",
-      rating: 0
-    };
-  },
-  methods: {
-    fetchUser() {
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          // User is signed in.
-          var db = firebase.firestore();
-          var docRef = db.collection("users").doc(user.uid);
-          docRef
-            .get()
-            .then(doc => {
-              if (doc && doc.exists) {
-                const myData = doc.data();
-                // console.log(myData);
-                this.course = myData.course;
-                this.name = myData.username;
-                this.year = myData.year;
-                if (myData.tutor) {
-                  this.rate = myData.rate;
-                  this.rating = myData.rating;
-                  docRef
-                    .collection("students")
-                    .get()
-                    .then(snap => {
-                      this.nstudents = snap.size;
-                      // console.log(snap);
-                    });
-                }
-              }
-            })
-            .catch(error => {
-              console.log("Got an error: ", error);
-            });
-        } else {
-          console.log("not signed in");
-        }
-      });
-    }
-  },
-  created() {
-    this.fetchUser();
-  }
+  props: ["tutor"]
 };
 </script>
 
