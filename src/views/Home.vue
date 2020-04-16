@@ -169,7 +169,6 @@ export default {
     addContact(){
       //add if statement to check if student is already in contacts
       //student in student requests shud have their own unique IDs to read from fb
-
       db.collection('users').doc(firebase.auth().currentUser.uid)
         .collection('contacts').get()
         .then(docSnapshot=> {
