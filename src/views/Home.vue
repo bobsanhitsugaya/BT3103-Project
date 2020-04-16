@@ -20,65 +20,48 @@
             />
           </v-container>
         </v-card>
-        <vue-grid v-show="!tutor" align="stretch" justify="between">
-          <vue-cell
-            v-for="tutor in tutors"
-            v-bind:key="tutor.name"
-            width="4of12"
-            ><TutorCard v-bind:tutor="tutor"
-          /></vue-cell>
-          <!-- <vue-cell width="4of12"><TopPicks /></vue-cell>
-          <vue-cell width="4of12"><TopPicks /></vue-cell> -->
+        <vue-grid v-show="!tutortoggle" align="stretch" justify="between">
+          <vue-cell v-for="tutor in tutors" v-bind:key="tutor.name" width="4of12">
+            <TutorCard v-bind:tutor="tutor" />
+          </vue-cell>
         </vue-grid>
-        <!-- <v-card
-          md12
-          v-show="!tutor"
-          flat
-          color="transparent"
-          style="margin:0px,max-width:20em"
-        >
-          <v-row nowrap>
-            <v-col><TopPicks /></v-col>
-            <v-col><TopPicks /></v-col>
-            <v-col><TopPicks /></v-col>
-          </v-row>
-        </v-card> -->
-        <v-card v-show="tutor">
+
+        <v-card v-show="tutortoggle">
           <div class="container">
             <div class="table-responsive">
               <table class="table">
                 <thead>
                   <tr>
-                    <th>Student Name</th>
+                    <th>Name</th>
                     <th>Subject</th>
-                    <!-- <th>Date</th> -->
                     <th>Timeslot</th>
                     <th></th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  <tr v-for="student in students" v-bind:key="student.name">
+                  <tr v-for="student in requests" v-bind:key="student.name">
                     <td class="my-2">{{ student.name }}</td>
-
                     <td>{{ student.module }}</td>
                     <td>
                       {{
-                        student.time.toDate().toDateString() +
-                          ', ' +
-                          student.time.toDate().getHours() +
-                          ':' +
-                          student.time.toDate().getMinutes() +
-                          '0'
+                      student.date.toDate().toDateString() +
+                      ', ' +
+                      student.date.toDate().getHours() +
+                      ':' +
+                      student.date.toDate().getMinutes() +
+                      '0'
                       }}
                     </td>
                     <td>
-                      <v-btn class="mx-2" depressed small color="primary"
-                        >Accept</v-btn
-                      >
-                      <v-btn v-on:click="select(student.name) ; addContact()" class="mx-2" depressed small color="success"
-                        >Send Message</v-btn
-                      >
+                      <v-btn class="mx-2" depressed small color="primary">Accept</v-btn>
+                      <v-btn
+                        v-on:click="select(student.student) ; addContact()"
+                        class="mx-2"
+                        depressed
+                        small
+                        color="success"
+                      >Send Message</v-btn>
                     </td>
                   </tr>
                 </tbody>
@@ -93,16 +76,16 @@
 </template>
 
 <script>
-import StarRating from 'vue-star-rating';
-import { ToggleButton } from 'vue-js-toggle-button';
-import ProfileCard from '../components/ProfileCard.vue';
-import MessageCard from '../components/MessageCard.vue';
-import Calender from '../components/Calender.vue';
-import firebase from 'firebase';
-import { VueGrid, VueCell } from 'vue-grd';
-import TutorCard from '../components/TutorCard.vue';
+import StarRating from "vue-star-rating";
+import { ToggleButton } from "vue-js-toggle-button";
+import ProfileCard from "../components/ProfileCard.vue";
+import MessageCard from "../components/MessageCard.vue";
+import Calender from "../components/Calender.vue";
+import firebase from "firebase";
+import { VueGrid, VueCell } from "vue-grd";
+import TutorCard from "../components/TutorCard.vue";
 export default {
-  name: 'app',
+  name: "app",
   components: {
     StarRating,
     ToggleButton,
@@ -116,26 +99,27 @@ export default {
 
   data() {
     return {
-      tutor: false,
-      title: 'Top Picks for CS2030',
-      student: null,
-      students: [],
+      user: "",
+      tutortoggle: false,
+      title: "Top Picks for CS2030",
+
+      requests: [],
       tutors: [
         {
-          name: 'Sam',
-          course: 'Year 4 Computer Science',
+          name: "Sam",
+          course: "Year 4 Computer Science",
           rate: 12,
           rating: 5
         },
         {
-          name: 'Dylan',
-          course: 'Year 2 Business Analytics',
+          name: "Dylan",
+          course: "Year 2 Business Analytics",
           rate: 15,
           rating: 5
         },
         {
-          name: 'Zen',
-          course: 'Year 3 Computer Science',
+          name: "Zen",
+          course: "Year 3 Computer Science",
           rate: 14,
           rating: 5
         }
@@ -143,29 +127,51 @@ export default {
     };
   },
   methods: {
-    //fetching not working
-    fetchRequests() {
-      let request = {};
-      db.collection('studentrequests')
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            request = doc.data();
-            request.id = doc.id;
-            console.log(request);
-            this.students.push(request);
-          });
-          console.log(this.students);
-        });
+    fetchUser() {
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          // User is signed in.
+          this.user = user.uid;
+          // console.log(this.user, user.uid);
+          const docRef = db.collection("users").doc(this.user);
+          db.collection("studentrequests")
+            .get()
+            .then(querySnapshot => {
+              querySnapshot.forEach(doc => {
+                let request = doc.data();
+
+                if (
+                  request.recipient != null &&
+                  request.recipient.id == this.user
+                ) {
+                  // console.log(this.user, request.recipient.id, docRef.id);
+                  // console.log("success", request);
+                  // console.log("author", request.author.id);
+                  let authorid = request.author.id;
+                  db.collection("users")
+                    .doc(authorid)
+                    .get()
+                    .then(doc => {
+                      // console.log("authorname", doc.data().username);
+                      request.name = doc.data().username;
+                    });
+                  this.requests.push(request);
+                }
+              });
+            });
+        }
+      });
     },
+
     swapCards() {
-      this.tutor = !this.tutor;
-      if (this.tutor) {
-        this.title = 'New Student Requests';
+      this.tutortoggle = !this.tutortoggle;
+      if (this.tutortoggle) {
+        this.title = "Appointment Requests";
       } else {
-        this.title = 'Top Picks for CS2030';
+        this.title = "Top Picks for CS2030";
       }
     },
+<<<<<<< HEAD
     addContact(){
       //add if statement to check if student is already in contacts
       //student in student requests shud have their own unique IDs to read from fb
@@ -174,20 +180,30 @@ export default {
         .then(docSnapshot=> {
           if(docSnapshot.exists){
             } else{
+=======
+    addContact() {
+      db.collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .collection("contacts")
+        .get()
+        .then(docSnapshot => {
+          if (docSnapshot.exists) {
+          } else {
+>>>>>>> 7145a49832a007c204f77a91a4a99ffede153ba0
             add({
-          name: this.student
-        }).then(this.$router.push({name: 'Chat'}))
-      }
-      });
+              name: this.student
+            }).then(this.$router.push({ name: "Chat" }));
+          }
+        });
     },
-    select: function(e){
-          this.student = e;
-          console.log(this.student)
-        }
+    select: function(e) {
+      this.student = e;
+      console.log(this.student);
+    }
   },
   created() {
-    this.fetchRequests();
-    console.log('fetched');
+    this.fetchUser();
+    console.log("fetched");
   }
 };
 </script>
