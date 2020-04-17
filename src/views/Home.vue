@@ -194,17 +194,9 @@ export default {
         this.title = 'Top Picks for CS2030';
       }
     },
-<<<<<<< HEAD
-    addContact(){
+    addContact() {
       //add if statement to check if student is already in contacts
       //student in student requests shud have their own unique IDs to read from fb
-      db.collection('users').doc(firebase.auth().currentUser.uid)
-        .collection('contacts').get()
-        .then(docSnapshot=> {
-          if(docSnapshot.exists){
-            } else{
-=======
-    addContact() {
       db.collection('users')
         .doc(firebase.auth().currentUser.uid)
         .collection('contacts')
@@ -212,7 +204,6 @@ export default {
         .then((docSnapshot) => {
           if (docSnapshot.exists) {
           } else {
->>>>>>> 7145a49832a007c204f77a91a4a99ffede153ba0
             add({
               name: this.student,
             }).then(this.$router.push({ name: 'Chat' }));
@@ -220,7 +211,7 @@ export default {
         });
     },
     acceptRequest() {
-      console.log(this.student;
+      console.log(this.student);
     },
     select: function(e) {
       this.student = e;
