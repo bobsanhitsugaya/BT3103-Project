@@ -61,7 +61,7 @@
                       <td>
                         <v-btn
                           v-on:click="
-                            select(student.student);
+                            select(student);
                             acceptRequest();
                           "
                           class="mx-2"
@@ -90,7 +90,7 @@
           </v-card>
           <br />
           <!-- <Calender /> -->
-          <TestCalender />
+          <TestCalender ref="calendar" />
         </v-flex>
       </v-layout>
     </v-container>
@@ -110,6 +110,7 @@ import TestCalender from '../components/TestCalender.vue';
 export default {
   name: 'app',
   components: {
+    TestCalender,
     StarRating,
     ToggleButton,
     ProfileCard,
@@ -118,7 +119,6 @@ export default {
     VueGrid,
     VueCell,
     TutorCard,
-    TestCalender,
   },
 
   data() {
@@ -126,7 +126,7 @@ export default {
       user: '',
       tutortoggle: false,
       title: 'Top Picks for CS2030',
-
+      value: {},
       requests: [],
       tutors: [
         {
@@ -152,6 +152,7 @@ export default {
   },
   methods: {
     fetchUser() {
+      this.requests = [];
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           // User is signed in.
@@ -166,12 +167,14 @@ export default {
 
                 if (
                   request.recipient != null &&
-                  request.recipient.id == this.user
+                  request.recipient.id == this.user &&
+                  !request.accept
                 ) {
                   // console.log(this.user, request.recipient.id, docRef.id);
                   // console.log("success", request);
                   // console.log("author", request.author.id);
                   let authorid = request.author.id;
+
                   db.collection('users')
                     .doc(authorid)
                     .get()
@@ -179,14 +182,18 @@ export default {
                       // console.log("authorname", doc.data().username);
                       request.name = doc.data().username;
                     });
+                  // console.log('request', request);
                   this.requests.push(request);
                 }
               });
             });
         }
+        this.fetchEvents();
       });
     },
-
+    fetchEvents() {
+      this.$refs.calendar.fetchEvents();
+    },
     swapCards() {
       this.tutortoggle = !this.tutortoggle;
       if (this.tutortoggle) {
@@ -212,11 +219,15 @@ export default {
         });
     },
     acceptRequest() {
-      console.log(this.student);
+      db.collection('studentrequests')
+        .doc(this.student.uid)
+        .update({ accept: true });
+      console.log('request accepted');
+      this.fetchUser();
     },
     select: function(e) {
       this.student = e;
-      console.log(this.student);
+      // console.log(this.student);
     },
   },
   created() {
