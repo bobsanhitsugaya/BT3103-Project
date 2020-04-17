@@ -157,9 +157,15 @@ export default {
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           // User is signed in.
-          this.user = user.uid;
-          // console.log('email', this.user, user.uid);
-          const docRef = db.collection('users').doc(user.uid);
+
+          console.log('uid', user.uid);
+          let email = '';
+          db.collection('users')
+            .doc(user.uid)
+            .get()
+            .then((doc) => {
+              email = doc.data().email;
+            });
           db.collection('studentrequests')
             .get()
             .then((querySnapshot) => {
@@ -168,10 +174,10 @@ export default {
 
                 if (
                   request.receipient != null &&
-                  request.receipient == user.email &&
+                  request.receipient == email &&
                   !request.accept
                 ) {
-                  console.log(this.user, request.recipient.id, docRef.id);
+                  // console.log(this.user, request.recipient.id, docRef.id);
                   // console.log("success", request);
                   // console.log("author", request.author.id);
                   let authorid = request.author;
