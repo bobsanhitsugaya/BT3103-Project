@@ -15,32 +15,27 @@ import 'vue-material-design-icons/styles.css';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import StarRating from 'vue-star-rating';
-import "vue-chartist";
+import 'vue-chartist';
+import 'vuetify/dist/vuetify.min.css';
+import FullCalendar from 'vue-full-calendar';
 
-
-
-
+Vue.use(FullCalendar);
 Vue.config.productionTip = false;
 Vue.use(VueChatScroll);
 Vue.use(CarouselPlugin);
 Vue.use(NavbarPlugin);
 Vue.use(Vuetify);
-Vue.use(require('vue-chartist'))
+Vue.use(require('vue-chartist'));
 
 window.$ = window.jQuery = jQuery;
 
-firebase.auth().onAuthStateChanged(user => {
+firebase.auth().onAuthStateChanged((user) => {
   store.dispatch('fetchUser', user);
 });
-// export default new Vuetify({
-//   icons: {
-//     iconfont: 'md'
-//   }
-// });
 
 new Vue({
-  render: h => h(App),
+  render: (h) => h(App),
   router,
   store,
-  components: { App, StarRating }
+  components: { App, StarRating },
 }).$mount('#app');
