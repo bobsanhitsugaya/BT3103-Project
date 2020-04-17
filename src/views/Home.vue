@@ -1,91 +1,114 @@
 <template>
-  <v-container>
-    <v-layout col>
-      <v-flex md3>
-        <v-card flat color="transparent">
-          <ProfileCard />
-          <MessageCard />
-        </v-card>
-      </v-flex>
+  <div id="app">
+    <v-container>
+      <v-layout col>
+        <v-flex md3>
+          <v-card flat color="transparent">
+            <ProfileCard />
+            <MessageCard />
+          </v-card>
+        </v-flex>
 
-      <v-flex md9>
-        <v-card flat color="transparent">
-          <v-container fluid grid-list-lg>
-            <h2>{{ title }}</h2>
-            <ToggleButton
-              @change="swapCards"
-              :labels="{ unchecked: 'Student', checked: 'Tutor' }"
-              style="float:right"
-              width="80"
-            />
-          </v-container>
-        </v-card>
-        <vue-grid v-show="!tutortoggle" align="stretch" justify="between">
-          <vue-cell v-for="tutor in tutors" v-bind:key="tutor.name" width="4of12">
-            <TutorCard v-bind:tutor="tutor" />
-          </vue-cell>
-        </vue-grid>
+        <v-flex md9>
+          <v-card flat color="transparent">
+            <v-container fluid grid-list-lg>
+              <h2>{{ title }}</h2>
+              <ToggleButton
+                @change="swapCards"
+                :labels="{ unchecked: 'Student', checked: 'Tutor' }"
+                style="float:right"
+                width="80"
+              />
+            </v-container>
+          </v-card>
+          <vue-grid v-show="!tutortoggle" align="stretch" justify="between">
+            <vue-cell
+              v-for="tutor in tutors"
+              v-bind:key="tutor.name"
+              width="4of12"
+            >
+              <TutorCard v-bind:tutor="tutor" />
+            </vue-cell>
+          </vue-grid>
 
-        <v-card v-show="tutortoggle">
-          <div class="container">
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Subject</th>
-                    <th>Timeslot</th>
-                    <th></th>
-                  </tr>
-                </thead>
+          <v-card v-show="tutortoggle">
+            <div class="container">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Subject</th>
+                      <th>Timeslot</th>
+                      <th></th>
+                    </tr>
+                  </thead>
 
-                <tbody>
-                  <tr v-for="student in requests" v-bind:key="student.name">
-                    <td class="my-2">{{ student.name }}</td>
-                    <td>{{ student.module }}</td>
-                    <td>
-                      {{
-                      student.date.toDate().toDateString() +
-                      ', ' +
-                      student.date.toDate().getHours() +
-                      ':' +
-                      student.date.toDate().getMinutes() +
-                      '0'
-                      }}
-                    </td>
-                    <td>
-                      <v-btn class="mx-2" depressed small color="primary">Accept</v-btn>
-                      <v-btn
-                        v-on:click="select(student.student) ; addContact()"
-                        class="mx-2"
-                        depressed
-                        small
-                        color="success"
-                      >Send Message</v-btn>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                  <tbody>
+                    <tr v-for="student in requests" v-bind:key="student.name">
+                      <td class="my-2">{{ student.name }}</td>
+                      <td>{{ student.module }}</td>
+                      <td>
+                        {{
+                          student.date.toDate().toDateString() +
+                            ', ' +
+                            student.date.toDate().getHours() +
+                            ':' +
+                            student.date.toDate().getMinutes() +
+                            '0'
+                        }}
+                      </td>
+                      <td>
+                        <v-btn
+                          v-on:click="
+                            select(student.student);
+                            acceptRequest();
+                          "
+                          class="mx-2"
+                          depressed
+                          small
+                          color="primary"
+                          >Accept</v-btn
+                        >
+                        <v-btn
+                          v-on:click="
+                            select(student.student);
+                            addContact();
+                          "
+                          class="mx-2"
+                          depressed
+                          small
+                          color="success"
+                          >Send Message</v-btn
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        </v-card>
-        <Calender />
-      </v-flex>
-    </v-layout>
-  </v-container>
+          </v-card>
+          <br />
+          <!-- <Calender /> -->
+          <TestCalender />
+        </v-flex>
+      </v-layout>
+    </v-container>
+  </div>
 </template>
 
 <script>
-import StarRating from "vue-star-rating";
-import { ToggleButton } from "vue-js-toggle-button";
-import ProfileCard from "../components/ProfileCard.vue";
-import MessageCard from "../components/MessageCard.vue";
-import Calender from "../components/Calender.vue";
-import firebase from "firebase";
-import { VueGrid, VueCell } from "vue-grd";
-import TutorCard from "../components/TutorCard.vue";
+import StarRating from 'vue-star-rating';
+import { ToggleButton } from 'vue-js-toggle-button';
+import ProfileCard from '../components/ProfileCard.vue';
+import MessageCard from '../components/MessageCard.vue';
+import Calender from '../components/Calender.vue';
+import firebase from 'firebase';
+import { VueGrid, VueCell } from 'vue-grd';
+import TutorCard from '../components/TutorCard.vue';
+import TestCalender from '../components/TestCalender.vue';
 export default {
-  name: "app",
+  name: 'app',
   components: {
     StarRating,
     ToggleButton,
@@ -94,50 +117,51 @@ export default {
     Calender,
     VueGrid,
     VueCell,
-    TutorCard
+    TutorCard,
+    TestCalender,
   },
 
   data() {
     return {
-      user: "",
+      user: '',
       tutortoggle: false,
-      title: "Top Picks for CS2030",
+      title: 'Top Picks for CS2030',
 
       requests: [],
       tutors: [
         {
-          name: "Sam",
-          course: "Year 4 Computer Science",
+          name: 'Sam',
+          course: 'Year 4 Computer Science',
           rate: 12,
-          rating: 5
+          rating: 5,
         },
         {
-          name: "Dylan",
-          course: "Year 2 Business Analytics",
+          name: 'Dylan',
+          course: 'Year 2 Business Analytics',
           rate: 15,
-          rating: 5
+          rating: 5,
         },
         {
-          name: "Zen",
-          course: "Year 3 Computer Science",
+          name: 'Zen',
+          course: 'Year 3 Computer Science',
           rate: 14,
-          rating: 5
-        }
-      ]
+          rating: 5,
+        },
+      ],
     };
   },
   methods: {
     fetchUser() {
-      firebase.auth().onAuthStateChanged(user => {
+      firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           // User is signed in.
           this.user = user.uid;
           // console.log(this.user, user.uid);
-          const docRef = db.collection("users").doc(this.user);
-          db.collection("studentrequests")
+          const docRef = db.collection('users').doc(this.user);
+          db.collection('studentrequests')
             .get()
-            .then(querySnapshot => {
-              querySnapshot.forEach(doc => {
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
                 let request = doc.data();
 
                 if (
@@ -148,10 +172,10 @@ export default {
                   // console.log("success", request);
                   // console.log("author", request.author.id);
                   let authorid = request.author.id;
-                  db.collection("users")
+                  db.collection('users')
                     .doc(authorid)
                     .get()
-                    .then(doc => {
+                    .then((doc) => {
                       // console.log("authorname", doc.data().username);
                       request.name = doc.data().username;
                     });
@@ -166,35 +190,40 @@ export default {
     swapCards() {
       this.tutortoggle = !this.tutortoggle;
       if (this.tutortoggle) {
-        this.title = "Appointment Requests";
+        this.title = 'Appointment Requests';
       } else {
-        this.title = "Top Picks for CS2030";
+        this.title = 'Top Picks for CS2030';
       }
     },
     addContact() {
-      db.collection("users")
+      //add if statement to check if student is already in contacts
+      //student in student requests shud have their own unique IDs to read from fb
+      db.collection('users')
         .doc(firebase.auth().currentUser.uid)
-        .collection("contacts")
+        .collection('contacts')
         .get()
-        .then(docSnapshot => {
+        .then((docSnapshot) => {
           if (docSnapshot.exists) {
           } else {
             add({
-              name: this.student
-            }).then(this.$router.push({ name: "Chat" }));
+              name: this.student,
+            }).then(this.$router.push({ name: 'Chat' }));
           }
         });
+    },
+    acceptRequest() {
+      console.log(this.student);
     },
     select: function(e) {
       this.student = e;
       console.log(this.student);
-    }
+    },
   },
   created() {
     this.fetchUser();
-    console.log("fetched");
-  }
+    // console.log("fetched");
+  },
 };
 </script>
 
-<style scoped></style>
+<style></style>
