@@ -64,6 +64,7 @@
                             select(student.student);
                             acceptRequest();
                           "
+
                           class="mx-2"
                           depressed
                           small
@@ -125,6 +126,7 @@ export default {
     return {
       user: '',
       tutortoggle: false,
+      name:"",
       title: 'Top Picks for CS2030',
 
       requests: [],
@@ -168,7 +170,7 @@ export default {
                   request.recipient != null &&
                   request.recipient.id == this.user
                 ) {
-                  // console.log(this.user, request.recipient.id, docRef.id);
+                  console.log(this.user, request.recipient.id, docRef.id);
                   // console.log("success", request);
                   // console.log("author", request.author.id);
                   let authorid = request.author.id;
@@ -205,8 +207,9 @@ export default {
         .then((docSnapshot) => {
           if (docSnapshot.exists) {
           } else {
-            add({
-              name: this.student,
+            db.collection('users').doc(firebase.auth().currentUser.uid)
+            .collection('contacts').add({
+              name: this.student.name
             }).then(this.$router.push({ name: 'Chat' }));
           }
         });
