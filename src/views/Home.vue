@@ -125,6 +125,7 @@ export default {
     return {
       user: '',
       tutortoggle: false,
+      name: '',
       title: 'Top Picks for CS2030',
       value: {},
       requests: [],
@@ -170,7 +171,7 @@ export default {
                   request.receipient == user.email &&
                   !request.accept
                 ) {
-                  // console.log(this.user, request.recipient.id, docRef.id);
+                  console.log(this.user, request.recipient.id, docRef.id);
                   // console.log("success", request);
                   // console.log("author", request.author.id);
                   let authorid = request.author;
@@ -204,16 +205,22 @@ export default {
       }
     },
     addContact() {
-      console.log('add', this.student.author.id);
-      const author = this.student.author.id;
-      const email = '';
+      console.log(this.student);
       db.collection('users')
-        .doc(author)
-        .get()
-        .then((doc) => {
-          email = doc.data().email;
-          // console.log(email);
-        });
+        .doc(firebase.auth().currentUser.uid)
+        .collection('contacts')
+        .doc(this.student.author)
+        .set({
+          name: this.student.author,
+          studentName: this.student.name,
+        })
+        .then(this.$router.push({ name: 'Chat' }));
+
+      /* db.collection('users').doc(firebase.auth().currentUser.uid)
+            .collection('contacts').doc(this.student.email).set({
+              name: this.student.email,
+              studentName: this.student.name
+            }).then(this.$router.push({ name: 'Chat' }));*/
     },
     acceptRequest() {
       // console.log('student', this.student.uid);

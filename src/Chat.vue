@@ -30,7 +30,7 @@
                         <v-btn
                           class="mx-2"
                           depressed
-                          @click="addNew"
+                          @click="select(contact.name);addNew()"
                           color="#F1BA79"
                           :style="{ float: 'right'}"
                           >Schedule session</v-btn
@@ -223,7 +223,11 @@ export default {
             author: firebase.auth().currentUser.email,
             receipient: this.receipient,
             created: new Date(),
-            module: this.module
+            module: this.module,
+            accepted: false,
+            uid: firebase.auth().currentUser.uid,
+            auth_rec:firebase.auth().currentUser.email.concat(this.receipient).length
+
           }).then(()=>{
             this.modal=null;
           });

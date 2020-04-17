@@ -23,11 +23,11 @@
                     <v-card-text>You have no new messages.</v-card-text>
                     <v-card-actions>
                       <v-btn
-                        to="/chat"
                         class="orange white--text"
                         small
                         tile
                         outlined
+                        @click="addContact()"
                       >View past messages</v-btn>
                     </v-card-actions>
                   </v-card>
@@ -117,6 +117,7 @@
 </template>
 
 <script>
+import firebase from 'firebase';
 import db from "@/firebase/init.js";
 import { VueEditor } from "vue2-editor";
 import StarRating from "vue-star-rating";
@@ -147,7 +148,8 @@ export default {
       skill: {
         name: null,
         detail: null
-      }
+      },
+      email:""
     };
   },
   methods: {
@@ -174,6 +176,8 @@ export default {
             console.log(doc.id, " => ", doc.data().skills);
             allskillset = doc.data().skills;
             console.log("Skills:" + allskillset);
+            this.email = doc.data().email;
+            console.log("email= "+this.email);
           });
           this.skillset = allskillset;
         });
@@ -181,7 +185,18 @@ export default {
       console.log(this.skillset);
 
       console.log("fetched");
-    }
+      console.log(this.email);
+    },
+      addContact() {
+      console.log(this.email);
+      db.collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('contacts')
+        .doc(this.email).set({
+          name:this.email
+        }).then(this.$router.push({name:'Chat'}));
+        console.log('here');
+      }
   },
   created() {
     db.collection("users")
@@ -207,7 +222,8 @@ export default {
       });
     this.fetchEverything();
   }
-};
+}
+
 </script>
 
 <style>
