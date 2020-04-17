@@ -22,6 +22,7 @@ export default {
   components: {
     FullCalendar, // make the <FullCalendar> tag available
   },
+  // props: [length],
   data() {
     return {
       calendarPlugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -40,6 +41,7 @@ export default {
   },
   methods: {
     fetchEvents() {
+      this.events = [];
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           // User is signed in.
@@ -90,8 +92,16 @@ export default {
   },
   created() {
     this.fetchEvents();
-    console.log('fetched');
+    // console.log('length', length);
+    // console.log('fetched');
   },
+
+  // watch: {
+  //   length: function(val) {
+  //     fetchEvents.reload();
+  //     console.log('length changed');
+  //   },
+  // },
 };
 </script>
 <style lang="scss">
