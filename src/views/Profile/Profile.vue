@@ -8,6 +8,7 @@
               <v-layout row wrap>
                 <v-flex>
                   <h2>Profile</h2>
+
                 </v-flex>
               </v-layout>
             </v-container>
@@ -112,7 +113,7 @@
                         <div class="form-group">
                           <input
                             type="text"
-                            placeholder="Module Name"
+                            placeholder="Module code (please use capital letters) e.g. CS1010S"
                             v-model="experience.code"
                             class="form-control"
                           />
@@ -120,11 +121,21 @@
                         <div class="form-group">
                           <input
                             type="text"
-                            placeholder="Module skill"
+                            placeholder="Module name e.g. Discrete Structures"
+                            v-model="experience.name"
+                            class="form-control"
+                          />
+                        </div>
+                        <div class="form-group">
+                          <input
+                            type="text"
+                            placeholder="Your skill level (out of 10) e.g. 7/10"
                             v-model="experience.skill"
                             class="form-control"
                           />
                         </div>
+                        
+                        
 
                       </div>
                     </div>
@@ -318,6 +329,13 @@ export default {
   },
   data() {
     return {
+      name: null,
+      year: "",
+      course: null,
+      rate: "-",
+      nstudents: "-",
+      rating: 0,
+      testlist: [],
       experiences: [],
       experience: {
         code: null,
@@ -352,7 +370,8 @@ export default {
       .get().then(querySnapshot => {
         return querySnapshot.docs[0].ref.update({
           code: this.experience.code,
-          skill: this.experience.skill
+          skill: this.experience.skill,
+          name: this.experience.name,
         })
       }).then(() => {this.fetchEverything()});
       $('#experience').modal('hide');
@@ -363,12 +382,24 @@ export default {
       $('#experience').modal('show');
     },
     deleteExperience(experience) {
-      db.collection('users').doc(firebase.auth().currentUser.uid).collection("modules").where('id','==',experience.id)
-      .get().then(querySnapshot => {
-      return querySnapshot.docs[0].ref.delete().then(() => {
-      this.fetchEverything()
+      db.collection('users')
+      .doc(firebase.auth().currentUser.uid)
+      .collection("modules")
+      .where('id','==',experience.id)
+      .get()
+      .then(querySnapshot => {
+        return querySnapshot.docs[0].ref.delete().then(() => {
+          this.fetchEverything()
       })
   });
+    db.collection('modules')
+    .doc(experience.code)
+    .update({
+      tutors: firebase.firestore.FieldValue.arrayRemove(this.name)
+    })
+    console.log("removed from Modules");
+    ;
+
     }
     ,
     addExperience() {
@@ -381,6 +412,35 @@ export default {
           .then(() => {
             alert('Module created successfully');
           });
+      
+        console.log("reaches above modules");
+
+
+          db.collection('modules')
+          .doc(this.experience.code)
+          .get()
+          .then(doc => {
+            if (doc.exists) {
+            console.log("Exists!");
+            db.collection('modules')
+            .doc(this.experience.code)
+            .update({
+              tutors: firebase.firestore.FieldValue.arrayUnion(this.name)
+              });
+
+            }
+            else{
+              console.log("Don't Exist!")
+              db.collection('modules')
+              .doc(this.experience.code)
+              .set({
+                code: this.experience.code,
+                name: this.experience.name,
+                tutors: [this.name],
+              });
+            }
+          });
+
       } else {
         alert('Enter blank first');
       }
@@ -397,9 +457,34 @@ export default {
           let allExperiences = [];
           querySnapshot.forEach(doc => {
             allExperiences.push(doc.data());
+            console.log(doc.data())
           });
           this.experiences = allExperiences;
         });
+
+        firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          // User is signed in.
+          var db = firebase.firestore();
+          var docRef = db.collection("users").doc(user.uid);
+          docRef
+            .get()
+            .then(doc => {
+              if (doc && doc.exists) {
+                const myData = doc.data();
+                this.course = myData.course;
+                this.name = myData.username;
+                this.year = myData.year;
+              }
+            })
+            .catch(error => {
+              console.log("Got an error: ", error);
+            });
+        } else {
+          console.log("not signed in");
+        }
+      });
+
 
         db.collection('users')
         .doc(firebase.auth().currentUser.uid)
@@ -462,6 +547,7 @@ export default {
           .then(() => {
             alert('Skill created successfully');
           });
+
       } else {
         alert('Enter blank first');
       }
@@ -471,6 +557,7 @@ export default {
   },
   created() {
     this.fetchEverything();
+
   }
 };
 </script>
