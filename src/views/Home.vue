@@ -72,7 +72,7 @@
                         >
                         <v-btn
                           v-on:click="
-                            select(student.student);
+                            select(student);
                             addContact();
                           "
                           class="mx-2"
@@ -157,8 +157,8 @@ export default {
         if (user) {
           // User is signed in.
           this.user = user.uid;
-          // console.log(this.user, user.uid);
-          const docRef = db.collection('users').doc(this.user);
+          // console.log('email', this.user, user.uid);
+          const docRef = db.collection('users').doc(user.uid);
           db.collection('studentrequests')
             .get()
             .then((querySnapshot) => {
@@ -166,29 +166,30 @@ export default {
                 let request = doc.data();
 
                 if (
-                  request.recipient != null &&
-                  request.recipient.id == this.user &&
+                  request.receipient != null &&
+                  request.receipient == user.email &&
                   !request.accept
                 ) {
                   // console.log(this.user, request.recipient.id, docRef.id);
                   // console.log("success", request);
                   // console.log("author", request.author.id);
-                  let authorid = request.author.id;
-
+                  let authorid = request.author;
+                  // console.log('authorid', authorid);
                   db.collection('users')
-                    .doc(authorid)
+                    .where('email', '==', authorid)
                     .get()
-                    .then((doc) => {
-                      // console.log("authorname", doc.data().username);
-                      request.name = doc.data().username;
+                    .then((querySnapshot) => {
+                      querySnapshot.forEach((doc) => {
+                        console.log('authorname', doc.data());
+                        request.name = doc.data().username;
+                      });
                     });
-                  // console.log('request', request);
+
                   this.requests.push(request);
                 }
               });
             });
         }
-        this.fetchEvents();
       });
     },
     fetchEvents() {
@@ -203,36 +204,34 @@ export default {
       }
     },
     addContact() {
-      //add if statement to check if student is already in contacts
-      //student in student requests shud have their own unique IDs to read from fb
+      console.log('add', this.student.author.id);
+      const author = this.student.author.id;
+      const email = '';
       db.collection('users')
-        .doc(firebase.auth().currentUser.uid)
-        .collection('contacts')
+        .doc(author)
         .get()
-        .then((docSnapshot) => {
-          if (docSnapshot.exists) {
-          } else {
-            add({
-              name: this.student,
-            }).then(this.$router.push({ name: 'Chat' }));
-          }
+        .then((doc) => {
+          email = doc.data().email;
+          // console.log(email);
         });
     },
     acceptRequest() {
+      // console.log('student', this.student.uid);
       db.collection('studentrequests')
         .doc(this.student.uid)
         .update({ accept: true });
       console.log('request accepted');
       this.fetchUser();
+      this.fetchEvents();
     },
     select: function(e) {
       this.student = e;
-      // console.log(this.student);
+      console.log(this.student);
     },
   },
   created() {
     this.fetchUser();
-    // console.log("fetched");
+    this.fetchEvents();
   },
 };
 </script>

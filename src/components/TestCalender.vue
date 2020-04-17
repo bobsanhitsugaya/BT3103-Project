@@ -42,35 +42,73 @@ export default {
   methods: {
     fetchEvents() {
       this.events = [];
+
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           // User is signed in.
-          this.user = user.uid;
+          // this.user = user.uid;
           // console.log(this.user, user.uid);
-          const docRef = db.collection('users').doc(this.user);
+          // const docRef = db.collection('users').doc(this.user);
+          let email = '';
+          db.collection('users')
+            .doc(user.uid)
+            .get()
+            .then((doc) => {
+              if (doc.exists) {
+                email = doc.data().email;
+                // console.log(email, doc.data().email);
+              }
+            });
           db.collection('studentrequests')
             .get()
             .then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
                 const event = {};
                 if (
-                  doc.data().recipient != null &&
-                  doc.data().recipient.id == this.user &&
+                  doc.data().receipient != null &&
+                  doc.data().receipient == email &&
                   doc.data().accept
                 ) {
-                  let authorid = doc.data().author.id;
+                  // current user is recipient of confirmed request
+                  let authoremail = doc.data().author;
                   let module = doc.data().module;
                   let date = doc.data().date;
                   db.collection('users')
-                    .doc(authorid)
+                    .where('email', '==', authoremail)
                     .get()
-                    .then((doc) => {
-                      console.log('date', date.toDate());
-                      const title = doc.data().username + ' ' + module;
-                      console.log('title: ', title);
-                      this.events.push({
-                        title: title,
-                        start: date.toDate(),
+                    .then((querySnapshot) => {
+                      querySnapshot.forEach((doc) => {
+                        // console.log('date', date.toDate());
+                        const title = doc.data().username + ' ' + module;
+                        // console.log('title: ', title);
+                        this.events.push({
+                          title: title,
+                          start: date.toDate(),
+                        });
+                      });
+                    });
+                }
+                if (
+                  doc.data().author != null &&
+                  doc.data().author == email &&
+                  doc.data().accept
+                ) {
+                  // current user is author of confirmed request
+                  let receipientemail = doc.data().receipient;
+                  let module = doc.data().module;
+                  let date = doc.data().date;
+                  db.collection('users')
+                    .where('email', '==', receipientemail)
+                    .get()
+                    .then((querySnapshot) => {
+                      querySnapshot.forEach((doc) => {
+                        // console.log('date', date.toDate());
+                        const title = doc.data().username + ' ' + module;
+                        // console.log('title: ', title);
+                        this.events.push({
+                          title: title,
+                          start: date.toDate(),
+                        });
                       });
                     });
                 }
@@ -92,16 +130,7 @@ export default {
   },
   created() {
     this.fetchEvents();
-    // console.log('length', length);
-    // console.log('fetched');
   },
-
-  // watch: {
-  //   length: function(val) {
-  //     fetchEvents.reload();
-  //     console.log('length changed');
-  //   },
-  // },
 };
 </script>
 <style lang="scss">
