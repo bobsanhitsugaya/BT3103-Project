@@ -73,7 +73,7 @@
                         >
                         <v-btn
                           v-on:click="
-                            select(student.student);
+                            select(student);
                             addContact();
                           "
                           class="mx-2"
@@ -205,21 +205,22 @@ export default {
       }
     },
     addContact() {
-      //add if statement to check if student is already in contacts
-      //student in student requests shud have their own unique IDs to read from fb
+      console.log(this.student)
       db.collection('users')
         .doc(firebase.auth().currentUser.uid)
         .collection('contacts')
-        .get()
-        .then((docSnapshot) => {
-          if (docSnapshot.exists) {
-          } else {
-            db.collection('users').doc(firebase.auth().currentUser.uid)
-            .collection('contacts').add({
-              name: this.student.name
-            }).then(this.$router.push({ name: 'Chat' }));
-          }
-        });
+        .doc(this.student.author).set({
+          name:this.student.author,
+          studentName: this.student.name
+        }).then(this.$router.push({name:'Chat'}));
+
+       
+           /* db.collection('users').doc(firebase.auth().currentUser.uid)
+            .collection('contacts').doc(this.student.email).set({
+              name: this.student.email,
+              studentName: this.student.name
+            }).then(this.$router.push({ name: 'Chat' }));*/
+          
     },
     acceptRequest() {
       db.collection('studentrequests')
