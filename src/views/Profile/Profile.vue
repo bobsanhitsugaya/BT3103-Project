@@ -3,18 +3,32 @@
     <v-container>
       <v-layout row>
         <v-flex md3>
-         <v-card flat class="card--flex-toolbar" color="transparent">
+          <!-- <v-card flat class="card--flex-toolbar" color="transparent">
             <v-container fluid grid-list-lg>
               <v-layout row wrap>
                 <v-flex>
                   <h2>Profile</h2>
-
                 </v-flex>
               </v-layout>
             </v-container>
-          </v-card>
-            <ProfileCard />
-            <MessageCard />
+          </v-card> -->
+          <ProfileCard />
+          <br />
+          <v-btn
+            to="/chat"
+            :style="{
+              align: 'center',
+              width: '89%',
+              color: '#FFFFFF',
+              marginLeft: '4%',
+            }"
+            color="#F1BA79"
+            large
+            tile
+            outlined
+            bold
+            >Go to Chat</v-btn
+          >
         </v-flex>
 
         <v-flex md8>
@@ -42,7 +56,7 @@
 
                 <div class="table-responsive">
                   <table class="table">
-                    <thead >
+                    <thead>
                       <tr>
                         <th>Module</th>
                         <th>Skill</th>
@@ -51,7 +65,10 @@
                     </thead>
 
                     <tbody>
-                      <tr v-for="experience in experiences" v-bind:key="experience">
+                      <tr
+                        v-for="experience in experiences"
+                        v-bind:key="experience"
+                      >
                         <td>
                           {{ experience.code }}
                         </td>
@@ -95,8 +112,20 @@
               <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="editLabel" v-if="modal == 'new'" >Add Experience</h5>
-                    <h5 class="modal-title" id="editLabel" v-if="modal == 'edit'" >Edit Experience</h5>
+                    <h5
+                      class="modal-title"
+                      id="editLabel"
+                      v-if="modal == 'new'"
+                    >
+                      Add Experience
+                    </h5>
+                    <h5
+                      class="modal-title"
+                      id="editLabel"
+                      v-if="modal == 'edit'"
+                    >
+                      Edit Experience
+                    </h5>
                     <button
                       type="button"
                       class="close"
@@ -134,9 +163,6 @@
                             class="form-control"
                           />
                         </div>
-                        
-                        
-
                       </div>
                     </div>
                   </div>
@@ -203,14 +229,15 @@
 
                     <tbody>
                       <tr v-for="skill in skillset" v-bind:key="skill">
-                        <h4>
-                          {{ skill.name }}
-                        </h4>
+                        <td>
+                          <span>
+                            <h5>
+                              {{ skill.name }}
+                            </h5>
 
-                        <p1>
-                          {{ skill.detail }}
-                        </p1>
-
+                            {{ skill.detail }}
+                          </span>
+                        </td>
                         <td>
                           <v-btn
                             class="mx-2"
@@ -325,28 +352,28 @@ export default {
   components: {
     StarRating,
     ProfileCard,
-    MessageCard
+    MessageCard,
   },
   data() {
     return {
       name: null,
-      year: "",
+      year: '',
       course: null,
-      rate: "-",
-      nstudents: "-",
+      rate: '-',
+      nstudents: '-',
       rating: 0,
       testlist: [],
       experiences: [],
       experience: {
         code: null,
         skill: null,
-        id: null
+        id: null,
       },
       skillset: [],
       skill: {
         name: null,
         detail: null,
-        id: null
+        id: null,
       },
       activeItem: null,
       modal: null,
@@ -357,7 +384,7 @@ export default {
       this.experience = {
         code: null,
         skill: null,
-        id: null
+        id: null,
       };
     },
     addNewExperience() {
@@ -366,14 +393,21 @@ export default {
       $('#experience').modal('show');
     },
     updateExperience() {
-      db.collection('users').doc(firebase.auth().currentUser.uid).collection("modules").where('id','==',this.experience.id)
-      .get().then(querySnapshot => {
-        return querySnapshot.docs[0].ref.update({
-          code: this.experience.code,
-          skill: this.experience.skill,
-          name: this.experience.name,
+      db.collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('modules')
+        .where('id', '==', this.experience.id)
+        .get()
+        .then((querySnapshot) => {
+          return querySnapshot.docs[0].ref.update({
+            code: this.experience.code,
+            skill: this.experience.skill,
+            name: this.experience.name,
+          });
         })
-      }).then(() => {this.fetchEverything()});
+        .then(() => {
+          this.fetchEverything();
+        });
       $('#experience').modal('hide');
     },
     editExperience(experience) {
@@ -383,64 +417,57 @@ export default {
     },
     deleteExperience(experience) {
       db.collection('users')
-      .doc(firebase.auth().currentUser.uid)
-      .collection("modules")
-      .where('id','==',experience.id)
-      .get()
-      .then(querySnapshot => {
-        return querySnapshot.docs[0].ref.delete().then(() => {
-          this.fetchEverything()
-      })
-  });
-    db.collection('modules')
-    .doc(experience.code)
-    .update({
-      tutors: firebase.firestore.FieldValue.arrayRemove(this.name)
-    })
-    console.log("removed from Modules");
-    ;
-
-    }
-    ,
+        .doc(firebase.auth().currentUser.uid)
+        .collection('modules')
+        .where('id', '==', experience.id)
+        .get()
+        .then((querySnapshot) => {
+          return querySnapshot.docs[0].ref.delete().then(() => {
+            this.fetchEverything();
+          });
+        });
+      db.collection('modules')
+        .doc(experience.code)
+        .update({
+          tutors: firebase.firestore.FieldValue.arrayRemove(this.name),
+        });
+      console.log('removed from Modules');
+    },
     addExperience() {
       this.experience.id = new Date();
       if (this.experience.code != null && this.experience.skill != null) {
         db.collection('users')
-        .doc(firebase.auth().currentUser.uid)
-        .collection('modules')
+          .doc(firebase.auth().currentUser.uid)
+          .collection('modules')
           .add(this.experience)
           .then(() => {
             alert('Module created successfully');
           });
-      
-        console.log("reaches above modules");
 
+        console.log('reaches above modules');
 
-          db.collection('modules')
+        db.collection('modules')
           .doc(this.experience.code)
           .get()
-          .then(doc => {
+          .then((doc) => {
             if (doc.exists) {
-            console.log("Exists!");
-            db.collection('modules')
-            .doc(this.experience.code)
-            .update({
-              tutors: firebase.firestore.FieldValue.arrayUnion(this.name)
-              });
-
-            }
-            else{
-              console.log("Don't Exist!")
+              console.log('Exists!');
               db.collection('modules')
-              .doc(this.experience.code)
-              .set({
-                code: this.experience.code,
-                name: this.experience.name,
-                tutors: [this.name],
-              });
+                .doc(this.experience.code)
+                .update({
+                  tutors: firebase.firestore.FieldValue.arrayUnion(this.name),
+                });
+            } else {
+              console.log("Don't Exist!");
+              db.collection('modules')
+                .doc(this.experience.code)
+                .set({
+                  code: this.experience.code,
+                  name: this.experience.name,
+                  tutors: [this.name],
+                });
             }
           });
-
       } else {
         alert('Enter blank first');
       }
@@ -448,28 +475,27 @@ export default {
       $('#experience').modal('hide');
     },
     fetchEverything() {
-
-        db.collection('users')
+      db.collection('users')
         .doc(firebase.auth().currentUser.uid)
         .collection('modules')
         .get()
-        .then(querySnapshot => {
+        .then((querySnapshot) => {
           let allExperiences = [];
-          querySnapshot.forEach(doc => {
+          querySnapshot.forEach((doc) => {
             allExperiences.push(doc.data());
-            console.log(doc.data())
+            console.log(doc.data());
           });
           this.experiences = allExperiences;
         });
 
-        firebase.auth().onAuthStateChanged(user => {
+      firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           // User is signed in.
           var db = firebase.firestore();
-          var docRef = db.collection("users").doc(user.uid);
+          var docRef = db.collection('users').doc(user.uid);
           docRef
             .get()
-            .then(doc => {
+            .then((doc) => {
               if (doc && doc.exists) {
                 const myData = doc.data();
                 this.course = myData.course;
@@ -477,35 +503,33 @@ export default {
                 this.year = myData.year;
               }
             })
-            .catch(error => {
-              console.log("Got an error: ", error);
+            .catch((error) => {
+              console.log('Got an error: ', error);
             });
         } else {
-          console.log("not signed in");
+          console.log('not signed in');
         }
       });
 
-
-        db.collection('users')
+      db.collection('users')
         .doc(firebase.auth().currentUser.uid)
         .collection('skills')
         .get()
-        .then(querySnapshot => {
+        .then((querySnapshot) => {
           let allSkills = [];
-          querySnapshot.forEach(doc => {
+          querySnapshot.forEach((doc) => {
             allSkills.push(doc.data());
           });
           this.skillset = allSkills;
         });
 
-        console.log('fetched');
-
+      console.log('fetched');
     },
-      resetSkill() {
+    resetSkill() {
       this.skill = {
         name: null,
         detail: null,
-        id: null
+        id: null,
       };
     },
     newSkill() {
@@ -514,13 +538,20 @@ export default {
       $('#skill').modal('show');
     },
     updateSkill() {
-      db.collection('users').doc(firebase.auth().currentUser.uid).collection("skills").where('id','==',this.skill.id)
-      .get().then(querySnapshot => {
-        return querySnapshot.docs[0].ref.update({
-          name: this.skill.name,
-          detail: this.skill.detail
+      db.collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('skills')
+        .where('id', '==', this.skill.id)
+        .get()
+        .then((querySnapshot) => {
+          return querySnapshot.docs[0].ref.update({
+            name: this.skill.name,
+            detail: this.skill.detail,
+          });
         })
-      }).then(() => {this.fetchEverything()});
+        .then(() => {
+          this.fetchEverything();
+        });
       $('#skill').modal('hide');
     },
     editSkill(skill) {
@@ -529,25 +560,27 @@ export default {
       $('#skill').modal('show');
     },
     deleteSkill(skill) {
-      db.collection('users').doc(firebase.auth().currentUser.uid).collection("skills").where('id','==',skill.id)
-      .get().then(querySnapshot => {
-      return querySnapshot.docs[0].ref.delete().then(() => {
-      this.fetchEverything()
-      })
-  });
-    }
-    ,
+      db.collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('skills')
+        .where('id', '==', skill.id)
+        .get()
+        .then((querySnapshot) => {
+          return querySnapshot.docs[0].ref.delete().then(() => {
+            this.fetchEverything();
+          });
+        });
+    },
     addSkill() {
       this.skill.id = new Date();
       if (this.skill.name != null && this.skill.detail != null) {
         db.collection('users')
-        .doc(firebase.auth().currentUser.uid)
-        .collection('skills')
+          .doc(firebase.auth().currentUser.uid)
+          .collection('skills')
           .add(this.skill)
           .then(() => {
             alert('Skill created successfully');
           });
-
       } else {
         alert('Enter blank first');
       }
@@ -557,8 +590,7 @@ export default {
   },
   created() {
     this.fetchEverything();
-
-  }
+  },
 };
 </script>
 
