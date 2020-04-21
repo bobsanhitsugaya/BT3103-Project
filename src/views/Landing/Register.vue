@@ -133,7 +133,7 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
         .then(cred => {
-          return fb
+            fb
             .collection("users")
             .doc(cred.user.uid)
             .set({
@@ -143,12 +143,21 @@ export default {
               password: this.form.password,
               course: this.form.course,
               year: this.form.year,
-              faculty: this.form.faculty
+              faculty: this.form.faculty,
+              numstudent: 0,
+              rate: 0,
             });
+
+          this.$router.push('home')
+          alert(`you are logged in as ${cred.user.email}`)
+          
         })
         .catch(err => {
           this.error = err.message;
-        });
+        }
+        
+        
+        );
     }
   }
 };

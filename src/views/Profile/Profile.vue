@@ -15,6 +15,114 @@
           <ProfileCard />
           <br />
           <v-btn
+            @click="addHourlyRate"
+            :style="{
+              align: 'center',
+              width: '89%',
+              color: '#FFFFFF',
+              marginLeft: '4%',
+            }"
+            color="#F1BA79"
+            large
+            tile
+            outlined
+            bold
+            >Hourly Rate</v-btn
+          >
+
+<div
+              class="modal fade"
+              id="rate"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="editLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5
+                      class="modal-title"
+                      id="editLabel"
+                      v-if="modal == 'edit'"
+                    >
+                      Edit Hourly Rate
+                    </h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <!-- main module -->
+                      <div class="col-md-8">
+                        
+                        
+                        <v-slider
+            v-model="rate"
+            class="align-center"
+            :max=50
+            :min=0
+            hide-details
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model="rate"
+                class="mt-0 pt-0"
+                hide-details
+                single-line
+                type="number"
+                style="width: 60px"
+              ></v-text-field>
+            </template>
+          </v-slider>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button
+                      @click="addRate(rate)"
+                      type="button"
+                      class="btn btn-primary"
+                      v-if="modal == 'new'"
+                    >
+                      Save changes
+                    </button>
+                    <button
+                      @click="updateRate(rate)"
+                      type="button"
+                      class="btn btn-primary"
+                      v-if="modal == 'edit'"
+                    >
+                      Apply changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+
+          <br />
+          <v-btn
             to="/chat"
             :style="{
               align: 'center',
@@ -359,7 +467,7 @@ export default {
       name: null,
       year: '',
       course: null,
-      rate: '-',
+      rate: null,
       nstudents: '-',
       rating: 0,
       testlist: [],
@@ -380,6 +488,21 @@ export default {
     };
   },
   methods: {
+    addHourlyRate() {
+      this.modal = 'edit';
+      this.rate = rate;
+      $('#rate').modal('show');
+    },
+    updateRate(rate) {
+      db.collection('users')
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        rate: rate
+      }
+      );
+      this.fetchEverything();
+      $('#rate').modal('hide');
+    },
     resetExperience() {
       this.experience = {
         code: null,
@@ -522,6 +645,13 @@ export default {
           });
           this.skillset = allSkills;
         });
+
+        db.collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .get()
+        .then( (doc) => {
+          this.rate = doc.data().rate
+          });
 
       console.log('fetched');
     },

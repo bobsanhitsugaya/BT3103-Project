@@ -78,8 +78,6 @@ export default {
           this.$router.push({name: 'home'})
           alert(`you are logged in as ${user.user.email}`)
           
-          store.dispatch('fetchuser',user)
-          console.log(user.user.displayName)
         })
         .catch(err => {
           this.error = err.message;

@@ -91,8 +91,12 @@ export default {
                     .get()
                     .then(snap => {
                       this.nstudents = snap.size;
+                  
                       // console.log(snap);
                     });
+                    docRef.update({
+                    numstudent: this.nstudents
+                  });
                 }
               }
             })
