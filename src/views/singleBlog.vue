@@ -60,10 +60,10 @@
                     <tbody>
                       <tr
                         v-for="experience in experiences"
-                        v-bind:key="experience.module"
+                        v-bind:key="experience.code"
                         style="width:'inherit"
                       >
-                        <td id="testcss">{{ experience.module }}</td>
+                        <td id="testcss">{{ experience.code }}</td>
 
                         <td id="testcss">{{ experience.skill }}</td>
                       </tr>
@@ -144,7 +144,7 @@ export default {
       },
       experiences: [],
       experience: {
-        module: null,
+        code: null,
         skill: null,
       },
       skillset: [],
@@ -156,42 +156,8 @@ export default {
     };
   },
   methods: {
-    fetchEverything() {
-      db.collection('users')
-        .where('username', '==', this.id)
-        .get()
-        .then((querySnapshot) => {
-          let allExperiences = [];
-          querySnapshot.forEach((doc) => {
-            console.log(doc.id, ' => ', doc.data().experience);
-            allExperiences = doc.data().experience;
-            console.log('Experience:' + allExperiences);
-          });
-          this.experiences = allExperiences;
-        });
 
-      db.collection('users')
-        .where('username', '==', this.id)
-        .get()
-        .then((querySnapshot) => {
-          let allskillset = [];
-          querySnapshot.forEach((doc) => {
-            console.log(doc.id, ' => ', doc.data().skills);
-            allskillset = doc.data().skills;
-            console.log('Skills:' + allskillset);
-            this.email = doc.data().email;
-            console.log('email= ' + this.email);
-          });
-          this.skillset = allskillset;
-        });
-      console.log(this.experiences);
-      console.log(this.skillset);
-
-      console.log('fetched');
-      console.log(this.email);
-    },
     addContact() {
-      console.log(this.email);
       db.collection('users')
         .doc(firebase.auth().currentUser.uid)
         .collection('contacts')
@@ -200,7 +166,6 @@ export default {
           name: this.email,
         })
         .then(this.$router.push({ name: 'Chat' }));
-      console.log('here');
     },
   },
   created() {
@@ -213,19 +178,42 @@ export default {
             this.tutor.course = doc.data().course;
             this.tutor.year = doc.data().year;
             this.tutor.rate = doc.data().rate;
-            // this.tutor.rating = doc.data().rating;
             db.collection('users')
-              .doc(doc)
+              .doc(doc.id)
               .collection('students')
               .get()
               .then((snap) => {
                 this.tutor.nstudents = snap.size;
-                console.log(snap);
               });
+            
+            db.collection('users')
+              .doc(doc.id)
+              .collection('modules')
+              .get()
+              .then((querySnapshot) => {
+                let allExperiences = [];
+                querySnapshot.forEach((doc) => {
+                  allExperiences.push(doc.data());
+
+                });
+                this.experiences = allExperiences;
+              });
+
+            db.collection('users')
+              .doc(doc.id)
+              .collection('skills')
+              .get()
+              .then((querySnapshot) => {
+                let allSkills = [];
+                querySnapshot.forEach((doc) => {
+                  allSkills.push(doc.data());
+                });
+                this.skillset = allSkills;
+              });  
           }
         });
       });
-    this.fetchEverything();
+
   },
 };
 </script>

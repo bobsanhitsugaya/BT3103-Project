@@ -33,7 +33,7 @@
                     tile
                     outlined
                     @click="
-                      select(contact.name);
+                      select(contact.email);
                       fetchMessages();
                     "
                   >
@@ -49,7 +49,7 @@
                     tile
                     outlined
                     @click="
-                      select(contact.name);
+                      select(contact.email);
                       addNew();
                     "
                     >Schedule session</v-btn
