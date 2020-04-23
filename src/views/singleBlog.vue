@@ -26,8 +26,7 @@
                     tile
                     outlined
                     @click="addContact()"
-                    >Book A Session</v-btn
-                  >
+                  >Book A Session</v-btn>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -96,16 +95,13 @@
                     </thead>
 
                     <tbody>
-                      <tr
-                        v-for="skill in skillset"
-                        v-bind:key="skill.name"
-                        id="skillsbreaker"
-                      >
-                        <h3 id="skillsheader">
-                          {{ skill.name.toUpperCase() }}
-                        </h3>
-
-                        <p1 id="skillsdetail">{{ skill.detail }}</p1>
+                      <tr v-for="skill in skillset" v-bind:key="skill.name" style="width:'inherit">
+                        <p id="skillsdetail">
+                          <span>
+                            <h5>{{ skill.name.toUpperCase() }}</h5>
+                          </span>
+                          {{ skill.detail }}
+                        </p>
                       </tr>
                     </tbody>
                   </table>
@@ -120,101 +116,98 @@
 </template>
 
 <script>
-import firebase from 'firebase';
-import db from '@/firebase/init.js';
-import { VueEditor } from 'vue2-editor';
-import StarRating from 'vue-star-rating';
-import TutorProfileCard from '../components/TutorProfileCard';
+import firebase from "firebase";
+import db from "@/firebase/init.js";
+import { VueEditor } from "vue2-editor";
+import StarRating from "vue-star-rating";
+import TutorProfileCard from "../components/TutorProfileCard";
 
 export default {
   components: {
     StarRating,
-    TutorProfileCard,
+    TutorProfileCard
   },
   data() {
     return {
       id: this.$route.params.tut,
 
       tutor: {
-        name: '',
-        course: '',
-        rate: '',
-        nstudents: '',
-        rating: 5,
+        name: "",
+        course: "",
+        rate: "",
+        nstudents: "",
+        rating: 5
       },
       experiences: [],
       experience: {
         code: null,
-        skill: null,
+        skill: null
       },
       skillset: [],
       skill: {
         name: null,
-        detail: null,
+        detail: null
       },
-      email: '',
+      email: ""
     };
   },
   methods: {
-
     addContact() {
-      db.collection('users')
+      db.collection("users")
         .doc(firebase.auth().currentUser.uid)
-        .collection('contacts')
+        .collection("contacts")
         .doc(this.email)
         .set({
-          name: this.email,
+          name: this.email
         })
-        .then(this.$router.push({ name: 'Chat' }));
-    },
+        .then(this.$router.push({ name: "Chat" }));
+    }
   },
   created() {
-    db.collection('users')
+    db.collection("users")
       .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
           if (doc.data().username == this.id) {
             this.tutor.name = doc.data().username;
             this.tutor.course = doc.data().course;
             this.tutor.year = doc.data().year;
             this.tutor.rate = doc.data().rate;
-            db.collection('users')
+            db.collection("users")
               .doc(doc.id)
-              .collection('students')
+              .collection("students")
               .get()
-              .then((snap) => {
+              .then(snap => {
                 this.tutor.nstudents = snap.size;
               });
-            
-            db.collection('users')
-              .doc(doc.id)
-              .collection('modules')
-              .get()
-              .then((querySnapshot) => {
-                let allExperiences = [];
-                querySnapshot.forEach((doc) => {
-                  allExperiences.push(doc.data());
 
+            db.collection("users")
+              .doc(doc.id)
+              .collection("modules")
+              .get()
+              .then(querySnapshot => {
+                let allExperiences = [];
+                querySnapshot.forEach(doc => {
+                  allExperiences.push(doc.data());
                 });
                 this.experiences = allExperiences;
               });
 
-            db.collection('users')
+            db.collection("users")
               .doc(doc.id)
-              .collection('skills')
+              .collection("skills")
               .get()
-              .then((querySnapshot) => {
+              .then(querySnapshot => {
                 let allSkills = [];
-                querySnapshot.forEach((doc) => {
+                querySnapshot.forEach(doc => {
                   allSkills.push(doc.data());
                 });
                 this.skillset = allSkills;
-              });  
+              });
           }
         });
       });
-
-  },
+  }
 };
 </script>
 
