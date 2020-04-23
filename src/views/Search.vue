@@ -39,8 +39,6 @@ export default {
                     'tutors': doc.data().tutors,
                     'modules': doc.data().modules,
                 }
-                console.log('Write succeeded!');
-                console.log(data);
                 this.testlist.push(data);
 
 

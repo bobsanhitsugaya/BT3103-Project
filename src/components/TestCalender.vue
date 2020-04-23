@@ -46,9 +46,6 @@ export default {
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           // User is signed in.
-          // this.user = user.uid;
-          // console.log(this.user, user.uid);
-          // const docRef = db.collection('users').doc(this.user);
           let email = '';
           db.collection('users')
             .doc(user.uid)
@@ -56,7 +53,6 @@ export default {
             .then((doc) => {
               if (doc.exists) {
                 email = doc.data().email;
-                // console.log(email, doc.data().email);
               }
             });
           db.collection('studentrequests')
@@ -78,9 +74,7 @@ export default {
                     .get()
                     .then((querySnapshot) => {
                       querySnapshot.forEach((doc) => {
-                        // console.log('date', date.toDate());
                         const title = doc.data().username + ' ' + module;
-                        // console.log('title: ', title);
                         this.events.push({
                           title: title,
                           start: date.toDate(),
@@ -102,9 +96,7 @@ export default {
                     .get()
                     .then((querySnapshot) => {
                       querySnapshot.forEach((doc) => {
-                        // console.log('date', date.toDate());
                         const title = doc.data().username + ' ' + module;
-                        // console.log('title: ', title);
                         this.events.push({
                           title: title,
                           start: date.toDate(),
