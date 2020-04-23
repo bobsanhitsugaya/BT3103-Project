@@ -4,7 +4,7 @@
           <v-flex>
               <v-hover>
       <v-card>
-    <h1>Rates by Tutors by Modules</h1>
+    <h1>Number of tutors by Rate Charged</h1>
     <LineChart :styles="styles"/>
       </v-card>
       </v-hover>
@@ -13,14 +13,14 @@
       <br></br>
             <v-card>
 
-    <h1>Tutors by Modules</h1>
+    <h1>Number of Tutors by Modules</h1>
     <PieChart :styles="styles"/>
           </v-card>
                 <br></br>
 
       <v-card>
 
-    <h1>Number of students per Tutor</h1>
+    <h1>Number of Students per Tutor</h1>
     <BarChart :styles="styles"/>
           </v-card>
 </v-container>

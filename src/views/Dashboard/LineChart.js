@@ -11,7 +11,7 @@ export default{
         labels: Array.from({length:50},(v,k)=>k+1),
         datasets: [
           {
-            label: "Number of Students",
+            label: "Number of Tutors",
             borderColor	: "#001f3f",
             data: null,
             fill: false,
@@ -28,7 +28,13 @@ export default{
                     min:0
                 }
 
-            }]
+            }],
+            xAxes:[{
+              ticks:{
+                  min:0
+              }
+
+          }]
         }
       }
     }),
@@ -46,7 +52,7 @@ export default{
           }
           })
 
-          for (var p = 0; p < 51; p++ ) {
+          for (var p = 1; p < 51; p++ ) {
             var x = 0
             for (var i = 0; i < this.arr.length; i++) {
               if (this.arr[i] == p) {
