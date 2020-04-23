@@ -6,10 +6,7 @@
         <v-card slot-scope="{ hover }" :class="`elevation-${hover ? 12 : 2}`" class="profile">
           <div class="top-card" style="height:6.5em">
             <v-avatar size="100" class="avatar">
-              <img
-                src="https://i.pinimg.com/originals/57/3e/9e/573e9e53ee78e2a88c32d53bd8a5bfd2.jpg"
-                alt="dog"
-              />
+              <img src="https://ptetutorials.com/images/user-profile.png" class="image" />
             </v-avatar>
           </div>
 
@@ -64,7 +61,8 @@ export default {
       course: null,
       rate: "-",
       nstudents: "-",
-      rating: 0
+      rating: 0,
+      image: ""
     };
   },
   methods: {
@@ -82,6 +80,7 @@ export default {
                 this.course = myData.course;
                 this.name = myData.username;
                 this.year = myData.year;
+                this.image = myData.image;
                 if (myData.tutor) {
                   this.rate = myData.rate;
                   this.rating = myData.rating;
@@ -95,6 +94,31 @@ export default {
                     numstudent: this.nstudents
                   });
                 }
+              }
+            })
+            .catch(error => {
+              console.log("Got an error: ", error);
+            });
+        } else {
+          console.log("not signed in");
+        }
+      });
+    }
+  },
+  computed: {
+    profileImg() {
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          // User is signed in.
+          var db = firebase.firestore();
+          var docRef = db.collection("users").doc(user.uid);
+          docRef
+            .get()
+            .then(doc => {
+              if (doc && doc.exists) {
+                this.image = doc.data().image;
+                console.log("file", this.image);
+                return require(`../assets/${this.image}`);
               }
             })
             .catch(error => {
@@ -135,5 +159,9 @@ h3 {
   padding: 1em 0;
   color: gray;
   white-space: normal;
+}
+.image {
+  width: 100%;
+  height: 100%;
 }
 </style>

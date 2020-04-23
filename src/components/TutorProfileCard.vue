@@ -6,10 +6,7 @@
         <v-card slot-scope="{ hover }" :class="`elevation-${hover ? 12 : 2}`" class="profile">
           <div class="top-card" style="height:6.5em">
             <v-avatar size="100" class="avatar">
-              <img
-                src="https://i.pinimg.com/originals/57/3e/9e/573e9e53ee78e2a88c32d53bd8a5bfd2.jpg"
-                alt="dog"
-              />
+              <img src="https://ptetutorials.com/images/user-profile.png" class="image" />
             </v-avatar>
           </div>
 
@@ -35,7 +32,6 @@
                   <br />
                   <br />
                 </body>
-                <div class="review">click here to see reviews written by Tan's past tutees</div>
               </div>
             </div>
           </v-card-title>
@@ -56,8 +52,13 @@ export default {
   components: {
     StarRating
   },
-
-  props: ["tutor"]
+  props: ["tutor"],
+  data() {
+    dp: this.tutor.image;
+  },
+  created() {
+    console.log(tutor.image);
+  }
 };
 </script>
 
@@ -84,5 +85,9 @@ h3 {
   padding: 1em 0;
   color: gray;
   white-space: normal;
+}
+.image {
+  width: 100%;
+  height: 100%;
 }
 </style>

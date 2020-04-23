@@ -173,6 +173,7 @@ export default {
             this.tutor.course = doc.data().course;
             this.tutor.year = doc.data().year;
             this.tutor.rate = doc.data().rate;
+            this.tutor.image = doc.data().image;
             this.email = doc.data().email;
             db.collection("users")
               .doc(doc.id)
@@ -181,7 +182,7 @@ export default {
               .then(snap => {
                 this.tutor.nstudents = snap.size;
               });
-
+            console.log(this.tutor);
             db.collection("users")
               .doc(doc.id)
               .collection("modules")
