@@ -173,6 +173,7 @@ export default {
             this.tutor.course = doc.data().course;
             this.tutor.year = doc.data().year;
             this.tutor.rate = doc.data().rate;
+            this.email = doc.data().email;
             db.collection("users")
               .doc(doc.id)
               .collection("students")
