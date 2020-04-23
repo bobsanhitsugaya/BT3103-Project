@@ -252,13 +252,11 @@ export default {
               let allContacts = [];
               querySnapshot.forEach((doc) => {
                 let email = doc.data().name;
-                console.log('email', email);
                 db.collection('users')
                   .where('email', '==', email)
                   .get()
                   .then((snapshot) => {
                     snapshot.forEach((doc) => {
-                      console.log(doc.data());
                       allContacts.push(doc.data());
                     });
                   });

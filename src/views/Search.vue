@@ -1,15 +1,12 @@
 <template>
   <div id="show-blogs">
-    <h1 class="modsearch"><center>Module Search</center></h1>
+    <h1 class="modsearch">
+      <center>Module Search</center>
+    </h1>
     <br />
     <div class="searchbox">
       <center>
-        <input
-          type="text"
-          v-model="search"
-          placeholder="search module codes"
-          class="show-blogs"
-        />
+        <input type="text" v-model="search" placeholder="search module codes" class="show-blogs" />
       </center>
     </div>
 
@@ -18,37 +15,37 @@
       <h3>Tutors:</h3>
 
       <div v-for="tut in mods.tutors" class="tutor-col">
-        <router-link v-bind:to="'/tutors/' + tut"
-          ><h4>{{ tut }}</h4></router-link
-        >
+        <router-link v-bind:to="'/tutors/' + tut">
+          <h4>{{ tut }}</h4>
+        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import db from '@/firebase/init.js';
+import db from "@/firebase/init.js";
 export default {
   data() {
     return {
-      search: '',
-      testlist: [],
+      search: "",
+      testlist: []
     };
   },
   methods: {},
   created() {
-    db.collection('modules')
+    db.collection("modules")
       .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
           const data = {
             id: doc.id,
             code: doc.data().code,
             name: doc.data().name,
             tutors: doc.data().tutors,
-            modules: doc.data().modules,
+            modules: doc.data().modules
           };
-          console.log('Write succeeded!');
+          console.log("Write succeeded!");
           console.log(data);
           this.testlist.push(data);
         });
@@ -56,17 +53,40 @@ export default {
   },
   computed: {
     filteredBlogs: function() {
-      return this.testlist.filter((everymod) => {
+      return this.testlist.filter(everymod => {
         return everymod.code.toUpperCase().match(this.search.toUpperCase());
       });
     },
-  },
+    created() {
+      db.collection("modules")
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            const data = {
+              id: doc.id,
+              code: doc.data().code,
+              name: doc.data().name,
+              tutors: doc.data().tutors,
+              modules: doc.data().modules
+            };
+            this.testlist.push(data);
+          });
+        });
+    },
+    computed: {
+      filteredBlogs: function() {
+        return this.testlist.filter(everymod => {
+          return everymod.code.toUpperCase().match(this.search.toUpperCase());
+        });
+      }
+    }
+  }
 };
 </script>
 
 <style>
 h1 {
-  color: '#FFFFFF';
+  color: "#FFFFFF";
 }
 #show-blogs {
   max-width: 80%;

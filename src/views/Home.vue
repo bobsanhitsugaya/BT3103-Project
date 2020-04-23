@@ -159,7 +159,6 @@ export default {
         if (user) {
           // User is signed in.
 
-          console.log("uid", user.uid);
           let email = "";
           db.collection("users")
             .doc(user.uid)
@@ -178,17 +177,12 @@ export default {
                   request.receipient == email &&
                   !request.accept
                 ) {
-                  // console.log(this.user, request.recipient.id, docRef.id);
-                  // console.log("success", request);
-                  // console.log("author", request.author.id);
                   let authorid = request.author;
-                  // console.log('authorid', authorid);
                   db.collection("users")
                     .where("email", "==", authorid)
                     .get()
                     .then(querySnapshot => {
                       querySnapshot.forEach(doc => {
-                        console.log("authorname", doc.data());
                         request.name = doc.data().username;
                       });
                     });
@@ -212,7 +206,6 @@ export default {
       }
     },
     addContact() {
-      console.log(this.student);
       db.collection("users")
         .doc(firebase.auth().currentUser.uid)
         .collection("contacts")
@@ -222,25 +215,16 @@ export default {
           studentName: this.student.name
         })
         .then(this.$router.push({ name: "Chat" }));
-
-      /* db.collection('users').doc(firebase.auth().currentUser.uid)
-            .collection('contacts').doc(this.student.email).set({
-              name: this.student.email,
-              studentName: this.student.name
-            }).then(this.$router.push({ name: 'Chat' }));*/
     },
     acceptRequest() {
-      // console.log('student', this.student.uid);
       db.collection("studentrequests")
         .doc(this.student.uid)
         .update({ accept: true });
-      console.log("request accepted");
       this.fetchUser();
       this.fetchEvents();
     },
     select: function(e) {
       this.student = e;
-      console.log(this.student);
     }
   },
   created() {

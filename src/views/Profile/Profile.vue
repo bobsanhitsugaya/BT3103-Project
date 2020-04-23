@@ -554,7 +554,6 @@ export default {
         .update({
           tutors: firebase.firestore.FieldValue.arrayRemove(this.name),
         });
-      console.log('removed from Modules');
     },
     addExperience() {
       this.experience.id = new Date();
@@ -567,21 +566,17 @@ export default {
             alert('Module created successfully');
           });
 
-        console.log('reaches above modules');
-
         db.collection('modules')
           .doc(this.experience.code)
           .get()
           .then((doc) => {
             if (doc.exists) {
-              console.log('Exists!');
               db.collection('modules')
                 .doc(this.experience.code)
                 .update({
                   tutors: firebase.firestore.FieldValue.arrayUnion(this.name),
                 });
             } else {
-              console.log("Don't Exist!");
               db.collection('modules')
                 .doc(this.experience.code)
                 .set({
@@ -606,7 +601,6 @@ export default {
           let allExperiences = [];
           querySnapshot.forEach((doc) => {
             allExperiences.push(doc.data());
-            console.log(doc.data());
           });
           this.experiences = allExperiences;
         });
@@ -652,8 +646,6 @@ export default {
         .then( (doc) => {
           this.rate = doc.data().rate
           });
-
-      console.log('fetched');
     },
     resetSkill() {
       this.skill = {

@@ -79,7 +79,6 @@ export default {
             .then(doc => {
               if (doc && doc.exists) {
                 const myData = doc.data();
-                // console.log(myData);
                 this.course = myData.course;
                 this.name = myData.username;
                 this.year = myData.year;
@@ -92,7 +91,6 @@ export default {
                     .then(snap => {
                       this.nstudents = snap.size;
                   
-                      // console.log(snap);
                     });
                     docRef.update({
                     numstudent: this.nstudents
