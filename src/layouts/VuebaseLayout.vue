@@ -14,7 +14,7 @@
         <v-list class="pa-0" :class="{ 'list-border-bottom': miniVariant }">
           <v-list-tile>
             <v-list-tile-action v-if="!miniVariant">
-              <v-icon large color="orange">invert_colors</v-icon>
+              <img src="NUS.jpg" height="40" width="40">
             </v-list-tile-action>
             <v-list-tile-content v-if="!miniVariant">
               <v-list-tile-title>
