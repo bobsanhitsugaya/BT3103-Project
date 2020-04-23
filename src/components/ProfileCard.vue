@@ -35,7 +35,7 @@
                   <br />
                   <br />
                 </body>
-                <div class="review">click here to see reviews written by Tan's past tutees</div>
+                <!-- <div class="review">click here to see reviews written by {{name}}'s past tutees</div> -->
               </div>
             </div>
           </v-card-title>
@@ -90,9 +90,8 @@ export default {
                     .get()
                     .then(snap => {
                       this.nstudents = snap.size;
-                  
                     });
-                    docRef.update({
+                  docRef.update({
                     numstudent: this.nstudents
                   });
                 }

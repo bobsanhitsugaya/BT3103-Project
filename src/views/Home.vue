@@ -5,7 +5,6 @@
         <v-flex md3>
           <v-card flat color="transparent">
             <ProfileCard />
-            <MessageCard />
           </v-card>
         </v-flex>
 
