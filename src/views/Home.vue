@@ -22,12 +22,10 @@
             </v-container>
           </v-card>
           <vue-grid v-show="!tutortoggle" align="stretch" justify="between">
-            <vue-cell
-              v-for="tutor in tutors"
-              v-bind:key="tutor.name"
-              width="4of12"
-            >
-              <TutorCard v-bind:tutor="tutor" />
+            <vue-cell v-for="tutor in tutors" v-bind:key="tutor.name" width="4of12">
+              <router-link v-bind:to="'/tutors/' + tutor.username">
+                <TutorCard v-bind:tutor="tutor" />
+              </router-link>
             </vue-cell>
           </vue-grid>
 
@@ -50,12 +48,12 @@
                       <td>{{ student.module }}</td>
                       <td>
                         {{
-                          student.date.toDate().toDateString() +
-                            ', ' +
-                            student.date.toDate().getHours() +
-                            ':' +
-                            student.date.toDate().getMinutes() +
-                            '0'
+                        student.date.toDate().toDateString() +
+                        ', ' +
+                        student.date.toDate().getHours() +
+                        ':' +
+                        student.date.toDate().getMinutes() +
+                        '0'
                         }}
                       </td>
                       <td>
@@ -68,8 +66,7 @@
                           depressed
                           small
                           color="primary"
-                          >Accept</v-btn
-                        >
+                        >Accept</v-btn>
                         <v-btn
                           v-on:click="
                             select(student);
@@ -79,8 +76,7 @@
                           depressed
                           small
                           color="success"
-                          >Send Message</v-btn
-                        >
+                        >Send Message</v-btn>
                       </td>
                     </tr>
                   </tbody>
@@ -98,17 +94,17 @@
 </template>
 
 <script>
-import StarRating from 'vue-star-rating';
-import { ToggleButton } from 'vue-js-toggle-button';
-import ProfileCard from '../components/ProfileCard.vue';
-import MessageCard from '../components/MessageCard.vue';
-import Calender from '../components/Calender.vue';
-import firebase from 'firebase';
-import { VueGrid, VueCell } from 'vue-grd';
-import TutorCard from '../components/TutorCard.vue';
-import TestCalender from '../components/TestCalender.vue';
+import StarRating from "vue-star-rating";
+import { ToggleButton } from "vue-js-toggle-button";
+import ProfileCard from "../components/ProfileCard.vue";
+import MessageCard from "../components/MessageCard.vue";
+import Calender from "../components/Calender.vue";
+import firebase from "firebase";
+import { VueGrid, VueCell } from "vue-grd";
+import TutorCard from "../components/TutorCard.vue";
+import TestCalender from "../components/TestCalender.vue";
 export default {
-  name: 'app',
+  name: "app",
   components: {
     TestCalender,
     StarRating,
@@ -118,57 +114,62 @@ export default {
     Calender,
     VueGrid,
     VueCell,
-    TutorCard,
+    TutorCard
   },
 
   data() {
     return {
-      user: '',
+      user: "",
       tutortoggle: false,
-      name: '',
-      title: 'Top Picks for CS2030',
+      name: "",
+      title: "Top Picks for CS2030",
       value: {},
       requests: [],
-      tutors: [
-        {
-          name: 'Sam',
-          course: 'Year 4 Computer Science',
-          rate: 12,
-          rating: 5,
-        },
-        {
-          name: 'Dylan',
-          course: 'Year 2 Business Analytics',
-          rate: 15,
-          rating: 5,
-        },
-        {
-          name: 'Zen',
-          course: 'Year 3 Computer Science',
-          rate: 14,
-          rating: 5,
-        },
-      ],
+      tutors: []
     };
   },
   methods: {
+    fetchTutors() {
+      this.tutors = [];
+      db.collection("modules")
+        .where("code", "==", "CS2030")
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            let tutorlist = doc.data().tutors;
+            console.log(tutorlist.slice(2));
+            tutorlist = tutorlist.slice(2);
+            for (let i = 0; i < tutorlist.length; i++) {
+              db.collection("users")
+                .where("username", "==", tutorlist[i])
+                .get()
+                .then(querySnapshot => {
+                  querySnapshot.forEach(doc => {
+                    this.tutors.push(doc.data());
+                    console.log("tutor", doc.data());
+                  });
+                });
+            }
+          });
+        });
+    },
     fetchUser() {
       this.requests = [];
-      firebase.auth().onAuthStateChanged((user) => {
+      firebase.auth().onAuthStateChanged(user => {
         if (user) {
           // User is signed in.
 
-          let email = '';
-          db.collection('users')
+          let email = "";
+          db.collection("users")
             .doc(user.uid)
             .get()
-            .then((doc) => {
+            .then(doc => {
               email = doc.data().email;
             });
-          db.collection('studentrequests')
+          db.collection("studentrequests")
             .get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
+            .then(querySnapshot => {
+              querySnapshot.forEach(doc => {
                 let request = doc.data();
 
                 if (
@@ -177,11 +178,11 @@ export default {
                   !request.accept
                 ) {
                   let authorid = request.author;
-                  db.collection('users')
-                    .where('email', '==', authorid)
+                  db.collection("users")
+                    .where("email", "==", authorid)
                     .get()
-                    .then((querySnapshot) => {
-                      querySnapshot.forEach((doc) => {
+                    .then(querySnapshot => {
+                      querySnapshot.forEach(doc => {
                         request.name = doc.data().username;
                       });
                     });
@@ -199,25 +200,24 @@ export default {
     swapCards() {
       this.tutortoggle = !this.tutortoggle;
       if (this.tutortoggle) {
-        this.title = 'Appointment Requests';
+        this.title = "Appointment Requests";
       } else {
-        this.title = 'Top Picks for CS2030';
+        this.title = "Top Picks for CS2030";
       }
     },
     addContact() {
-      db.collection('users')
+      db.collection("users")
         .doc(firebase.auth().currentUser.uid)
-        .collection('contacts')
+        .collection("contacts")
         .doc(this.student.author)
         .set({
           name: this.student.author,
-          studentName: this.student.name,
+          studentName: this.student.name
         })
-        .then(this.$router.push({ name: 'Chat' }));
-
+        .then(this.$router.push({ name: "Chat" }));
     },
     acceptRequest() {
-      db.collection('studentrequests')
+      db.collection("studentrequests")
         .doc(this.student.uid)
         .update({ accept: true });
       this.fetchUser();
@@ -225,12 +225,13 @@ export default {
     },
     select: function(e) {
       this.student = e;
-    },
+    }
   },
   created() {
+    this.fetchTutors();
     this.fetchUser();
     this.fetchEvents();
-  },
+  }
 };
 </script>
 
